@@ -1,18 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}PlateformeCours!{% endblock %}
+{% block title %}Cours archivés!{% endblock %}
 
 {% block body %}
+
+
 
 <div>
 
     <div class="d-flex align-items-center justify-content-between mt-3">
-        {% if is_granted('ROLE_ADMIN') %}
-        <h2 class="d-inline">Mes séquences</h2>
-        <a href="/add-sequence" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séquence</a>
-        {% else %}
-        <h2 class="d-inline">Séquences</h2>
-        {% endif %}
+        <h2 class="d-inline">Mes séquences archivées</h2>
     </div>
     <div class="my-3 opacity-75">
         <div class="row">
@@ -34,13 +31,9 @@
                             </div>
                         </div>
                         <hr>
-
                         <div class="btn-group" role="group" aria-label="Sequence buttons">
-                            {% if is_granted('ROLE_ADMIN') %}
-                            <a href="/archivesequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-archive"></i></a>
-                            <a href="/editsequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-pencil-square"></i></a>
-                            <a href="/password-edit/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-key"></i></a>
-                            {% endif %}
+                            <a href="/unarchive/sequence/{{sequence.id}}" class="btn btn-lg btn-success"><i class="bi bi-check-circle-fill"></i></a>
+                            <a href="/delete/sequence/{{sequence.id}}" class="btn btn-lg btn-danger"><i class="bi bi-trash3-fill"></i></a>
                         </div>
                     </div>
                 </a>

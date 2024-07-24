@@ -29,6 +29,9 @@ class Document
     #[ORM\Column(length: 255)]
     private ?string $path = null;
 
+    #[ORM\Column]
+    private ?bool $isArchived = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Document
     public function setPath(string $path): static
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function isArchived(): ?bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setArchived(bool $isArchived): static
+    {
+        $this->isArchived = $isArchived;
 
         return $this;
     }

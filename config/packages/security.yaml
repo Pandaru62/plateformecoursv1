@@ -36,6 +36,11 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    access_denied_url: /home
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
@@ -45,6 +50,17 @@ security:
         - { path: /seq, roles: ROLE_USER }
         - { path: /seance, roles: ROLE_USER }
         - { path: /add-sequence, roles: ROLE_ADMIN }
+        - { path: /add-seance, roles: ROLE_ADMIN }
+        - { path: /newdocument, roles: ROLE_ADMIN }
+        - { path: /editseance, roles: ROLE_ADMIN }
+        - { path: /editsequence, roles: ROLE_ADMIN }
+        - { path: /editdocument, roles: ROLE_ADMIN }
+        - { path: /archiveseance, roles: ROLE_ADMIN }
+        - { path: /archivesequence, roles: ROLE_ADMIN }
+        - { path: /archivedocument, roles: ROLE_ADMIN }
+        - { path: /unarchive, roles: ROLE_ADMIN }
+        - { path: /delete, roles: ROLE_ADMIN }
+
 
         # - { path: ^/profile, roles: ROLE_USER }
 

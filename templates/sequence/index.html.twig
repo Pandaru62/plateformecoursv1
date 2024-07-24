@@ -20,7 +20,9 @@
 
 <section class="d-flex align-items-center justify-content-between mt-3">
     <h2 class="d-inline">Séquence {{sequence.numero}} : {{ sequence.titre }}</h2>
+    {% if is_granted('ROLE_ADMIN') %}
     <a href="/newseance/{{sequence.id}}" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séance</a>
+    {% endif %}
 </section>
 
 <section class="mt-3">

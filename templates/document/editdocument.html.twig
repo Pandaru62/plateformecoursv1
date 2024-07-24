@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajout Doucment{% endblock %}
+{% block title %}Editer document{% endblock %}
 
 {% block body %}
-    <h1>Ajouter un document</h1>
+    <h1>Editer un document</h1>
 
     {{ form_errors(form) }}
 
@@ -15,6 +15,6 @@
         {{ form_row(form.description) }}
         {{ form_row(form.path) }}
 
-        <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
+        <button type="submit" class="btn btn-primary mt-3">Modifier</button>
     {{ form_end(form) }}
 {% endblock %}

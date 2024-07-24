@@ -34,6 +34,9 @@ class Seance
     #[ORM\OneToMany(targetEntity: Document::class, mappedBy: 'seance')]
     private Collection $documents;
 
+    #[ORM\Column]
+    private ?bool $isArchived = null;
+
     public function __construct()
     {
         $this->documents = new ArrayCollection();
@@ -118,6 +121,18 @@ class Seance
                 $document->setSeance(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isArchived(): ?bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setArchived(bool $isArchived): static
+    {
+        $this->isArchived = $isArchived;
 
         return $this;
     }

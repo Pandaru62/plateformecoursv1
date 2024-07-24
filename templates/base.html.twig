@@ -18,18 +18,29 @@
     </head>
     <body>
 
+        
+
         <header>
             <div class="container-md my-3">
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    {% if app.user %}
+                <a href="/home" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <img id="logo-img" src="{{asset('images/book.png')}}" alt="logo livres">
+                    <span class="bg-primary text-light fw-bold rounded-3 p-2">PLATEFORME COURS</span>
+                </a>
+                {% else %}
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
                     <img id="logo-img" src="{{asset('images/book.png')}}" alt="logo livres">
                     <span class="bg-primary text-light fw-bold rounded-3 p-2">PLATEFORME COURS</span>
                 </a>
-        {{app.user ? '       
+                {% endif %}
+        {% if app.user %}   
                 <ul class="nav col-12 col-lg-auto mb-2 me-lg-auto justify-content-center mb-md-0">
-                    <li><a href="/home" class="nav-link px-2 link-secondary">Accueil</a></li>
-                    <li><a href="#" class="nav-link px-2 link-body-emphasis">Archives</a></li>
-                    <li><a href="#" class="nav-link px-2 link-body-emphasis">Mes documents</a></li>
+                    <li><a href="/home" class="nav-link px-2 link-body-emphasis">Accueil / Séquences</a></li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="/archives" class="nav-link px-2 link-body-emphasis">Archives</a></li>
+                    <li><a href="#" class="nav-link px-2 link-secondary">Documents</a></li>
+                    {% endif %}
                 </ul>
         
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 d-none" role="search">
@@ -39,21 +50,23 @@
 
                 <div class="dropdown text-end">
                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                    <img src="{{asset('images/profile.png')}}" alt="user" width="32" height="32" class="rounded-circle">
                     </a>
                     <ul class="dropdown-menu text-small">
+                    {% if is_granted('ROLE_ADMIN') %}
                     <li><a class="dropdown-item" href="/add-sequence">Nouvelle séquence</a></li>
                     <li><a class="dropdown-item" href="/add-seance">Nouveau cours</a></li>
                     <li><a class="dropdown-item" href="#">Paramètres</a></li>
                     <li><hr class="dropdown-divider"></li>
+                    {% endif %}
                     <li><a class="dropdown-item" href="/logout">Déconnexion</a></li>
                     </ul>
                 </div>
-                ' : '
+                {% else %}
                 <div class="d-flex ms-auto">
                     <a href="/login" class="btn btn-outline-primary">Connexion</a>
                 </div>
-                ' }}
+                {% endif %}
 
 
             </div>

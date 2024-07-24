@@ -29,6 +29,7 @@ class DocumentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $newDocument = $form->getData();
+            $newDocument->setArchived(0);
 
             $this->em->persist($newDocument);
             $this->em->flush();
@@ -40,5 +41,51 @@ class DocumentController extends AbstractController
             'form' => $form
         ]);
     }
+
+
+    
+    #[Route('/editdocument/{documentid}', methods: ['GET', 'POST'], name: 'edit_document')]
+    public function editSequence($documentid, Request $request): Response
+    {
+        $repository = $this->em->getRepository(Document::class);
+        $document = $repository->find($documentid);
+        $form = $this->createForm(DocumentFormType::class, $document);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $document->setType($form->get('type')->getData());
+            $document->setTitre($form->get('titre')->getData());
+            $document->setDescription($form->get('description')->getData());
+            $document->setSeance($form->get('seance')->getData());
+            $document->setType($form->get('path')->getData());
+            $document->setArchived(0);
+
+            $this->em->flush();
+            return $this->redirectToRoute('user_home');
+        }
+
+        return $this->render('document/edit.html.twig', [
+            'document' => $document,
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+
+    
+    #[Route('/archivedocument/{documentid}', methods: ['GET'], name: 'archive_document')]
+    public function archiveSeance($documentid): Response
+    {
+        $repository = $this->em->getRepository(Document::class);
+        $document = $repository->find($documentid);
+ 
+        $document->setArchived(1);
+
+        $this->em->flush();
+        return $this->redirectToRoute('user_home');
+    }
+    
+
 
 }

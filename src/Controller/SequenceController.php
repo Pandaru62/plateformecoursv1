@@ -35,7 +35,7 @@ class SequenceController extends AbstractController
         ]);
     }
 
-    #[Route('/add-sequence', name: 'create_sequence', methods: ['POST'])]
+    #[Route('/add-sequence', name: 'create_sequence', methods: ['POST', 'GET'])]
     public function create(Request $request): Response
     {
         $sequence = new Sequence();
@@ -45,23 +45,8 @@ class SequenceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $newSequence = $form->getData();
+            $newSequence->setArchived(0);
 
-            // $imagePath = $form->get('image')->getData();
-            // if ($imagePath) {
-            //     $newFileName = uniqid() . '.' . $imagePath->guessExtension();
-
-            //     try {
-            //         $imagePath->move(
-            //             $this->getParameter('kernel.project_dir') . '/public/uploads',
-            //             $newFileName
-            //         );
-            //     } catch(FileException $e) {
-            //         return new Response($e->getMessage());
-            //     }
-
-            //     $newSequence->setImagePath('/uploads/' . $newFileName);
-
-            // }
 
             $this->em->persist($newSequence);
             $this->em->flush();
@@ -73,5 +58,60 @@ class SequenceController extends AbstractController
             'form' => $form
         ]);
     }
+
+    
+    #[Route('/editsequence/{sequenceid}', methods: ['GET', 'POST'], name: 'edit_sequence')]
+    public function editSequence($sequenceid, Request $request): Response
+    {
+        $repository = $this->em->getRepository(Sequence::class);
+        $sequence = $repository->find($sequenceid);
+        $form = $this->createForm(SequenceFormType::class, $sequence);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $sequence->setNumero($form->get('numero')->getData());
+            $sequence->setTitre($form->get('titre')->getData());
+            $sequence->setDescription($form->get('description')->getData());
+            $sequence->setImage($form->get('image')->getData());
+            $sequence->setArchived(0);
+
+            $this->em->flush();
+            return $this->redirectToRoute('user_home');
+        }
+
+        return $this->render('sequence/edit.html.twig', [
+            'sequence' => $sequence,
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+
+    
+    #[Route('/archivesequence/{sequenceid}', methods: ['GET'], name: 'archive_sequence')]
+    public function archiveSequence($sequenceid): Response
+    {
+        $repository = $this->em->getRepository(Sequence::class);
+        $sequence = $repository->find($sequenceid);
+ 
+        $sequence->setArchived(1);
+
+        $this->em->flush();
+        return $this->redirectToRoute('user_home');
+    }
+
+    #[Route('/unarchive/sequence/{sequenceid}', methods: ['GET'], name: 'unarchive_sequence')]
+    public function unarchiveSequence($sequenceid): Response
+    {
+        $repository = $this->em->getRepository(Sequence::class);
+        $sequence = $repository->find($sequenceid);
+ 
+        $sequence->setArchived(0);
+
+        $this->em->flush();
+        return $this->redirectToRoute('user_home');
+    }
+    
 
 }

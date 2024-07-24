@@ -67,7 +67,7 @@ class SeanceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $newSeance = $form->getData();
-
+            $newSeance->setArchived(0);
 
             $this->em->persist($newSeance);
             $this->em->flush();
@@ -79,5 +79,48 @@ class SeanceController extends AbstractController
             'form' => $form
         ]);
     }
+
+    
+    #[Route('/editseance/{seanceid}', methods: ['GET', 'POST'], name: 'edit_seance')]
+    public function editSequence($seanceid, Request $request): Response
+    {
+        $repository = $this->em->getRepository(Seance::class);
+        $seance = $repository->find($seanceid);
+        $form = $this->createForm(SeanceFormType::class, $seance);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $seance->setNumero($form->get('numero')->getData());
+            $seance->setTitre($form->get('titre')->getData());
+            $seance->setDescription($form->get('description')->getData());
+            $seance->setSequence($form->get('sequence')->getData());
+            $seance->setArchived(0);
+
+            $this->em->flush();
+            return $this->redirectToRoute('user_home');
+        }
+
+        return $this->render('seance/edit.html.twig', [
+            'seance' => $seance,
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+
+    
+    #[Route('/archiveseance/{seanceid}', methods: ['GET'], name: 'archive_seance')]
+    public function archiveSeance($seanceid): Response
+    {
+        $repository = $this->em->getRepository(Seance::class);
+        $seance = $repository->find($seanceid);
+ 
+        $seance->setArchived(1);
+
+        $this->em->flush();
+        return $this->redirectToRoute('user_home');
+    }
+    
 
 }

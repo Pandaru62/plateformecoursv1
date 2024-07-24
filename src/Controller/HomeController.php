@@ -32,13 +32,12 @@ class HomeController extends AbstractController
     #[Route('/home', name: 'user_home')]
     public function indexUser(): Response
     {
-        $randomInt = random_int(1, 50);
 
         $repository = $this->em->getRepository(Sequence::class);
-        $sequences = $repository->findAll();
+        $sequences = $repository->findBy(['isArchived' => 0]);
 
         return $this->render('home/userhome.html.twig', [
-            'randomInt' => $randomInt, 'sequences' => $sequences
+            'sequences' => $sequences
         ]);
     }
 

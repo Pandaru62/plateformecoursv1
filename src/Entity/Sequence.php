@@ -33,6 +33,9 @@ class Sequence
     #[ORM\OneToMany(targetEntity: Seance::class, mappedBy: 'sequence')]
     private Collection $seances;
 
+    #[ORM\Column]
+    private ?bool $isArchived = null;
+
     public function __construct()
     {
         $this->seances = new ArrayCollection();
@@ -117,6 +120,18 @@ class Sequence
                 $seance->setSequence(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isArchived(): ?bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setArchived(bool $isArchived): static
+    {
+        $this->isArchived = $isArchived;
 
         return $this;
     }
