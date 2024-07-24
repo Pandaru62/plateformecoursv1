@@ -4,26 +4,13 @@
 
 {% block body %}
 
-<div class="d-none">
-    <h1>Bienvenue sur Plateforme Cours</h1>
 
-    <p>Vous devez être connecté pour accéder au site. <br>
-        
-    Un nombre au hasard ? {{ randomInt }} <br>
-
-    Site en cours de construction. A venir : </p>
-    <ul>
-        <li>Navbar</li>
-        <li>Menu</li>
-        <li>Implémentation des entités</li>
-    </ul>
-</div>
 
 <div>
-    <h1 class="text-center">Bienvenue [user].</h1>
-    <div class="d-flex align-items-center justify-content-between">
+
+    <div class="d-flex align-items-center justify-content-between mt-3">
         <h2 class="d-inline">Mes séquences</h2>
-        <button class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séquence</button>
+        <a href="/add-sequence" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séquence</a>
     </div>
     <div class="my-3 opacity-75">
         <div class="row">
@@ -56,6 +43,7 @@
             {% endfor %}
         </div>
     </div>
+
 </div>
 
 

@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\Document;
 use App\Entity\Sequence;
 use App\Entity\Seance;
+use App\Form\SeanceFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class SeanceController extends AbstractController
 {
@@ -53,4 +56,28 @@ class SeanceController extends AbstractController
             'seance' => $seance, 'docs' => $docs, 'sequence' => $sequence, 'allSeances' => $allSeances
         ]);
     }
+
+    #[Route('/add-seance', name: 'create_seance', methods: ['POST', 'GET'])]
+    public function create(Request $request): Response
+    {
+        $seance = new Seance();
+        $form = $this->createForm(SeanceFormType::class, $seance);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $newSeance = $form->getData();
+
+
+            $this->em->persist($newSeance);
+            $this->em->flush();
+
+            return $this->redirectToRoute('user_home');
+        }
+
+        return $this->render('seance/addseance.html.twig', [
+            'form' => $form
+        ]);
+    }
+
 }
