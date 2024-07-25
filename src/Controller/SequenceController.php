@@ -47,6 +47,22 @@ class SequenceController extends AbstractController
             $newSequence = $form->getData();
             $newSequence->setArchived(0);
 
+            $imagePath = $form->get('image')->getData();
+            if ($imagePath) {
+                $newFileName = uniqid() . '.' .$imagePath->guessExtension();
+
+                try {
+                    $imagePath->move(
+                        $this->getParameter('kernel.project_dir') . '/public/uploads',
+                        $newFileName
+                    );
+                } catch (FileException $e) {
+                    return new Response($e->getMessage());
+                }
+
+                $newSequence->setImage('/uploads/' . $newFileName);
+
+            }
 
             $this->em->persist($newSequence);
             $this->em->flush();
@@ -69,18 +85,48 @@ class SequenceController extends AbstractController
 
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
+            // update
             $sequence->setNumero($form->get('numero')->getData());
             $sequence->setTitre($form->get('titre')->getData());
             $sequence->setDescription($form->get('description')->getData());
-            $sequence->setImage($form->get('image')->getData());
             $sequence->setArchived(0);
+            
+            // handle image upload
+            $imagePath = $form->get('image')->getData();
 
+            if($imagePath) {
+                // Delete old image if exists
+                $oldImage = $sequence->getImage();
+                if ($oldImage && file_exists($this->getParameter('kernel.project_dir') . $oldImage)) {
+                    unlink($this->getParameter('kernel.project_dir') . $oldImage);
+                }
+
+                // Upload new image
+                $newFileName = uniqid() . '.' . $imagePath->guessExtension();
+
+                try {
+                    $imagePath->move(
+                        $this->getParameter('kernel.project_dir') . '/public/uploads',
+                        $newFileName
+                    );
+                } catch (FileException $e) {
+                    return new Response($e->getMessage());
+                }
+
+                $sequence->setImage('/uploads/' . $newFileName);
+            }
+
+            // Save sequence
             $this->em->flush();
-            return $this->redirectToRoute('user_home');
-        }
 
-        return $this->render('sequence/edit.html.twig', [
+            $this->addFlash('success', 'Sequence updated successfully.');
+            return $this->redirectToRoute('user_home');
+
+        }
+               
+        return $this->render('sequence/editsequence.html.twig', [
             'sequence' => $sequence,
             'form' => $form->createView(),
         ]);

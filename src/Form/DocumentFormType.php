@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class DocumentFormType extends AbstractType
 {
@@ -40,13 +40,15 @@ class DocumentFormType extends AbstractType
                 'attr' => [
                     'class' => 'form-control my-3',
                 ],
-                'label' => 'Description associé au document : '
+                'label' => 'Description associée au document : '
             ])
-            ->add('path', TextType::class, [
+            ->add('path', FileType::class, [
+                'required' => false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'form-control my-3',
                 ],
-                'label' => 'Lien du fichier : '
+                'label' => 'Fichier à télécharger : '
             ])
             ->add('seance', EntityType::class, [
                 'attr' => [

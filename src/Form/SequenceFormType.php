@@ -5,7 +5,9 @@ namespace App\Form;
 use App\Entity\Sequence;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,13 +30,15 @@ class SequenceFormType extends AbstractType
                 ],
                 'label' => 'Titre de la séquence : '
             ])
-            ->add('description', TextType::class, [
+            ->add('description', TextareaType::class, [
                 'attr' => [
                     'class' => 'form-control my-3',
                 ],
                 'label' => 'Description de la séquence : '
             ])
-            ->add('image', TextType::class, [
+            ->add('image', FileType::class, [
+                'required' => false,
+                'mapped' => false,
                 'attr' => [
                     'class' => 'form-control my-3',
                 ],

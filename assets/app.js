@@ -6,3 +6,6 @@ import './bootstrap.js';
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
+
+// compile new JS file
+import './javascript/method1.js';
