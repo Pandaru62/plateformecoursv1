@@ -3,14 +3,12 @@
 {% block title %}PlateformeCours!{% endblock %}
 
 {% block body %}
+
 <div>
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="d-flex align-items-center justify-content-between mt-3">
-        {% if is_granted('ROLE_ADMIN') %}
             <h2 class="d-inline">Mes séquences</h2>
             <a href="/add-sequence" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séquence</a>
-        {% else %}
-            <h2 class="d-inline">Séquences</h2>
-        {% endif %}
     </div>
     <div class="my-3 opacity-75">
         <div class="row">
@@ -33,7 +31,6 @@
                             </div>
                             <hr>
                             <div class="btn-group" role="group" aria-label="Sequence buttons">
-                                {% if is_granted('ROLE_ADMIN') %}
                                     <a href="/archivesequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-archive"></i></a>
                                     <a href="/editsequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-pencil-square"></i></a>
                                     <button type="button" class="btn btn-lg btn-outline-dark" data-bs-toggle="modal" data-bs-target="#seq{{sequence.id}}modal" data-sequence-id="{{sequence.id}}"><i class="bi bi-key"></i></button>
@@ -63,7 +60,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                {% endif %}
                             </div>
                         </div>
                     </a>
@@ -71,9 +67,46 @@
             {% endfor %}
         </div>
     </div>
+
+    {% else %}
+
+    <div class="d-flex align-items-center justify-content-between mt-3">
+            <h2 class="d-inline">Séquences</h2>
+    </div>
+    <div class="my-3 opacity-75">
+        <div class="row">
+            {% for sequence in sequences %}
+                <div class="col-12 col-md-6 col-xl-4 g-3 seq-card">
+                    <a href="/seq/{{sequence.id}}">
+                        <div class="text-center border border-dark p-3 rounded-4 card-user card-user-{{sequence.id}} card-user-locked">
+                            <div class="bg-dark text-light fw-bold py-3 rounded-3">
+                                <h3>Séquence {{ sequence.numero }}</h3>
+                            </div>
+                            <hr>
+                            <h4>{{ sequence.titre }}</h4>
+                            <hr>
+                            <div class="seq-img-zone">
+                                <img class="img-fluid" src="{{ asset('' ~ sequence.image) }}" alt="{{ sequence.image }}">
+                                <div class="seq-icon seq-icon-{{sequence.id}} position-absolute">
+                                    <i class="bi bi-eye-fill fs-1"></i>
+                                    <p>{{ sequence.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% endif %}   
+
 </div>
 
+
 <script>
+    // admin modals
+
     document.addEventListener('DOMContentLoaded', function () {
         const modals = document.querySelectorAll('.modal');
         
@@ -93,5 +126,46 @@
             });
         });
     });
+
+// 
+    
+const accessRecord = {{ accessRecord|json_encode|raw }};
+
+// Update cards with access
+accessRecord.forEach(element => {
+    const cardSelector = `.card-user-${element['sequenceId']}`;
+    const cardElement = document.querySelector(cardSelector);
+    
+    if (cardElement) {
+        // Remove the 'card-user-locked' class
+        cardElement.classList.remove('card-user-locked');
+    }
+});
+
+// Update descriptions for locked cards
+const allCards = document.querySelectorAll('.card-user');
+
+allCards.forEach(cardElement => {
+    // Check if the card is locked
+    if (cardElement.classList.contains('card-user-locked')) {
+        // Find the associated description element
+        const descriptionSelector = `.seq-icon`;
+        const descriptionElement = cardElement.querySelector(descriptionSelector);
+        
+        if (descriptionElement) {
+            descriptionElement.innerHTML = `
+                <i class="bi bi-lock-fill"></i>
+                <p>Entrez un mot de passe pour avoir accès à la séquence.</p>
+            `;
+        } else {
+            console.error(`Description element not found for selector: ${descriptionSelector}`);
+        }
+    }
+});
+
+            
+        
+
+
 </script>
 {% endblock %}

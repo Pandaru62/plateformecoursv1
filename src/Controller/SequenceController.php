@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Document\UserSequenceAccess;
 
 use App\Entity\Sequence;
 use App\Document\LessonKeys;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
+
 
 class SequenceController extends AbstractController
 {
@@ -24,20 +27,70 @@ class SequenceController extends AbstractController
         $this->dm = $dm;
     }
 
-    #[Route('/seq/{seq_id}', name: 'app_sequence', methods: ['GET'])]
-    public function showSequence($seq_id): Response
+    #[Route('/verify-sequence-password/{seq_id}', name: 'verify_sequence_password', methods: ['POST', 'GET'])]
+    public function verifySequencePassword($seq_id, Request $request, UserInterface $user): Response
     {
 
+         // Check if the user has the ROLE_ADMIN
+        if ($this->isGranted('ROLE_ADMIN')) {
+        // Grant access directly for admin users
+        return $this->redirectToRoute('app_sequence', ['seq_id' => $seq_id]);
+        }
+
+        // non-admin users
+        $password = $request->request->get('password');
+        $sequencePasswordRepository = $this->dm->getRepository(LessonKeys::class);
+        $sequencePassword = $sequencePasswordRepository->findOneBy(['sequenceId' => $seq_id]);
+
+        if ($sequencePassword && $sequencePassword->password === $password) {
+            // Password is correct, record the access
+            $userSequenceAccess = new UserSequenceAccess();
+            $userSequenceAccess->setUserId($user->getUserIdentifier());
+            $userSequenceAccess->setSequenceId($seq_id);
+            $this->dm->persist($userSequenceAccess);
+            $this->dm->flush();
+
+            return $this->redirectToRoute('app_sequence', ['seq_id' => $seq_id]);
+        } else {
+            // Password is incorrect, show error
+            $this->addFlash('error', 'Invalid password');
+            return $this->redirectToRoute('sequence_password_form', ['seq_id' => $seq_id]);
+        }
+    }
+
+    #[Route('/sequence-password-form/{seq_id}', name: 'sequence_password_form', methods: ['GET'])]
+    public function showPasswordForm($seq_id): Response
+    {
+        // Fetch the sequence details from MySQL
+        $repository = $this->em->getRepository(Sequence::class);
+        $sequence = $repository->find($seq_id);
+
+        return $this->render('sequence/password_form.html.twig', [
+            'sequence' => $sequence,
+        ]);
+    }
+
+    #[Route('/seq/{seq_id}', name: 'app_sequence', methods: ['GET'])]
+    public function showSequence($seq_id, UserInterface $user): Response
+    {
+        $userSequenceAccessRepository = $this->dm->getRepository(UserSequenceAccess::class);
+        $accessRecord = ($userSequenceAccessRepository->findOneBy(['userId' => $user->getUserIdentifier(), 'sequenceId' => $seq_id])) || $this->isGranted('ROLE_ADMIN');
+    
+        if (!$accessRecord) {
+            return $this->redirectToRoute('sequence_password_form', ['seq_id' => $seq_id]);
+        }
+    
         $seqRepository = $this->em->getRepository(Sequence::class);
         $seanceRepository = $this->em->getRepository(Seance::class);
         $allSequences = $seqRepository->findAll();
         $sequence = $seqRepository->find($seq_id);
         $seances = $seanceRepository->findBy(['sequence' => $seq_id]);
-
+    
         return $this->render('sequence/index.html.twig', [
             'sequence' => $sequence, 'allSequences' => $allSequences, 'seances' => $seances
         ]);
     }
+
 
     #[Route('/add-sequence', name: 'create_sequence', methods: ['POST', 'GET'])]
 public function create(Request $request): Response
@@ -101,10 +154,10 @@ public function create(Request $request): Response
 
     
 #[Route('/editsequence/{sequenceid}', methods: ['GET', 'POST'], name: 'edit_sequence')]
-public function editSequence($sequenceid, Request $request): Response
+public function editSequence($seq_id, Request $request): Response
 {
     $repository = $this->em->getRepository(Sequence::class);
-    $sequence = $repository->find($sequenceid);
+    $sequence = $repository->find($seq_id);
 
     // Fetch the existing password from MongoDB
     $sequencePasswordRepository = $this->dm->getRepository(LessonKeys::class);
@@ -185,10 +238,10 @@ public function editSequence($sequenceid, Request $request): Response
 
     
     #[Route('/archivesequence/{sequenceid}', methods: ['GET'], name: 'archive_sequence')]
-    public function archiveSequence($sequenceid): Response
+    public function archiveSequence($seq_id): Response
     {
         $repository = $this->em->getRepository(Sequence::class);
-        $sequence = $repository->find($sequenceid);
+        $sequence = $repository->find($seq_id);
  
         $sequence->setArchived(1);
 
@@ -197,10 +250,10 @@ public function editSequence($sequenceid, Request $request): Response
     }
 
     #[Route('/unarchive/sequence/{sequenceid}', methods: ['GET'], name: 'unarchive_sequence')]
-    public function unarchiveSequence($sequenceid): Response
+    public function unarchiveSequence($seq_id): Response
     {
         $repository = $this->em->getRepository(Sequence::class);
-        $sequence = $repository->find($sequenceid);
+        $sequence = $repository->find($seq_id);
  
         $sequence->setArchived(0);
 

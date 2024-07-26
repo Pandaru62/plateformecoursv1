@@ -56,6 +56,16 @@
     z-index: 1100 !important;
 }
 
+/* locked sequence styling */
+
+.card-user-locked {
+    background-color: rgb(0, 0, 0);
+}
+
+.card-user-locked img {
+    filter: brightness(20%)
+}
+
 
 /* sequence page displaying seances */
 

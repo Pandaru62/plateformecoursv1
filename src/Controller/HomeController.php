@@ -11,8 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use App\Document\LessonKeys;
+use App\Document\UserSequenceAccess;
 use PhpParser\Comment\Doc;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class HomeController extends AbstractController
 {
@@ -38,8 +40,11 @@ class HomeController extends AbstractController
     }
 
     #[Route('/home', name: 'user_home', methods: ['GET'])]
-    public function indexUser(): Response
+    public function indexUser(UserInterface $user): Response
     {
+
+        $userSequenceAccessRepository = $this->dm->getRepository(UserSequenceAccess::class);
+        $accessRecord = $userSequenceAccessRepository->findBy(['userId' => $user->getUserIdentifier()]);
 
         $repository = $this->em->getRepository(Sequence::class);
         $sequences = $repository->findBy(['isArchived' => 0]);
@@ -53,7 +58,7 @@ class HomeController extends AbstractController
                 // fin test MongoDB
 
         return $this->render('home/userhome.html.twig', [
-            'sequences' => $sequences, 'lessonKeys' => $lessonKeys
+            'sequences' => $sequences, 'lessonKeys' => $lessonKeys, 'accessRecord' => $accessRecord
         ]);
     }
 
