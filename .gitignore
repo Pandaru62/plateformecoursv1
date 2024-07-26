@@ -1,3 +1,9 @@
+### Temporary 
+
+/src/Entity
+/src/Repository
+/migrations
+
 ###> symfony/framework-bundle ###
 .env.test
 .env
@@ -24,3 +30,4 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+node_modules
