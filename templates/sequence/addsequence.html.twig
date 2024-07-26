@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Ajout séquence{% endblock %}
 
 {% block body %}
     <h1>Ajouter une séquence</h1>
@@ -12,6 +12,7 @@
         {{ form_row(form.titre) }}
         {{ form_row(form.description) }}
         {{ form_row(form.image) }}
+        {{ form_row(form.password)}}
 
         <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
     {{ form_end(form) }}

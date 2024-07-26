@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Sequence;
+use App\Document\LessonKeys;
 use App\Entity\Seance;
 use App\Form\SequenceFormType;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -15,9 +17,11 @@ use Symfony\Component\HttpFoundation\Request;
 class SequenceController extends AbstractController
 {
     private $em;
-    public function __construct(EntityManagerInterface $em)
+    private DocumentManager $dm;
+    public function __construct(EntityManagerInterface $em, DocumentManager $dm)
     {
         $this -> em = $em;
+        $this->dm = $dm;
     }
 
     #[Route('/seq/{seq_id}', name: 'app_sequence', methods: ['GET'])]
@@ -36,101 +40,146 @@ class SequenceController extends AbstractController
     }
 
     #[Route('/add-sequence', name: 'create_sequence', methods: ['POST', 'GET'])]
-    public function create(Request $request): Response
-    {
-        $sequence = new Sequence();
-        $form = $this->createForm(SequenceFormType::class, $sequence);
+public function create(Request $request): Response
+{
+    // Create a new Sequence object
+    $sequence = new Sequence();
+    
+    // Create the form and handle the request
+    $form = $this->createForm(SequenceFormType::class, $sequence);
+    $form->handleRequest($request);
 
-        $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $newSequence = $form->getData();
+        $newSequence->setArchived(0);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $newSequence = $form->getData();
-            $newSequence->setArchived(0);
+        // Handle image upload
+        $imagePath = $form->get('image')->getData();
+        if ($imagePath) {
+            $newFileName = uniqid() . '.' . $imagePath->guessExtension();
 
-            $imagePath = $form->get('image')->getData();
-            if ($imagePath) {
-                $newFileName = uniqid() . '.' .$imagePath->guessExtension();
-
-                try {
-                    $imagePath->move(
-                        $this->getParameter('kernel.project_dir') . '/public/uploads',
-                        $newFileName
-                    );
-                } catch (FileException $e) {
-                    return new Response($e->getMessage());
-                }
-
-                $newSequence->setImage('/uploads/' . $newFileName);
-
+            try {
+                $imagePath->move(
+                    $this->getParameter('kernel.project_dir') . '/public/uploads',
+                    $newFileName
+                );
+            } catch (FileException $e) {
+                return new Response($e->getMessage());
             }
 
-            $this->em->persist($newSequence);
-            $this->em->flush();
-
-            return $this->redirectToRoute('user_home');
+            $newSequence->setImage('/uploads/' . $newFileName);
         }
 
-        return $this->render('sequence/addsequence.html.twig', [
-            'form' => $form
-        ]);
+        // Persist the Sequence entity to MySQL
+        $this->em->persist($newSequence);
+        $this->em->flush();
+
+        // Retrieve the password from the form
+        $password = $form->get('password')->getData();
+
+        if ($password) {
+            // Create a new SequencePassword document
+            $sequencePassword = new LessonKeys();
+            $sequencePassword->sequenceId = (string) $newSequence->getId(); // Use the ID from the MySQL entity
+            $sequencePassword->password = $password;
+
+            // Persist the SequencePassword document to MongoDB
+            $this->dm->persist($sequencePassword);
+            $this->dm->flush();
+        }
+
+        // Redirect to the desired route
+        return $this->redirectToRoute('user_home');
     }
+
+    // Render the form view
+    return $this->render('sequence/addsequence.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
 
     
-    #[Route('/editsequence/{sequenceid}', methods: ['GET', 'POST'], name: 'edit_sequence')]
-    public function editSequence($sequenceid, Request $request): Response
-    {
-        $repository = $this->em->getRepository(Sequence::class);
-        $sequence = $repository->find($sequenceid);
-        $form = $this->createForm(SequenceFormType::class, $sequence);
+#[Route('/editsequence/{sequenceid}', methods: ['GET', 'POST'], name: 'edit_sequence')]
+public function editSequence($sequenceid, Request $request): Response
+{
+    $repository = $this->em->getRepository(Sequence::class);
+    $sequence = $repository->find($sequenceid);
 
-        $form->handleRequest($request);
+    // Fetch the existing password from MongoDB
+    $sequencePasswordRepository = $this->dm->getRepository(LessonKeys::class);
+    $sequencePassword = $sequencePasswordRepository->findOneBy(['sequenceId' => (string)$sequence->getId()]);
 
+    // Get the current password if it exists
+    $currentPassword = $sequencePassword ? $sequencePassword->password : '';
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // update
-            $sequence->setNumero($form->get('numero')->getData());
-            $sequence->setTitre($form->get('titre')->getData());
-            $sequence->setDescription($form->get('description')->getData());
-            $sequence->setArchived(0);
-            
-            // handle image upload
-            $imagePath = $form->get('image')->getData();
+    // Create the form
+    $form = $this->createForm(SequenceFormType::class, $sequence);
+    $form->handleRequest($request);
 
-            if($imagePath) {
-                // Delete old image if exists
-                $oldImage = $sequence->getImage();
-                if ($oldImage && file_exists($this->getParameter('kernel.project_dir') . $oldImage)) {
-                    unlink($this->getParameter('kernel.project_dir') . $oldImage);
-                }
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Update sequence entity
+        $sequence->setNumero($form->get('numero')->getData());
+        $sequence->setTitre($form->get('titre')->getData());
+        $sequence->setDescription($form->get('description')->getData());
+        $sequence->setArchived(0);
 
-                // Upload new image
-                $newFileName = uniqid() . '.' . $imagePath->guessExtension();
+        // Handle image upload
+        $imagePath = $form->get('image')->getData();
 
-                try {
-                    $imagePath->move(
-                        $this->getParameter('kernel.project_dir') . '/public/uploads',
-                        $newFileName
-                    );
-                } catch (FileException $e) {
-                    return new Response($e->getMessage());
-                }
-
-                $sequence->setImage('/uploads/' . $newFileName);
+        if ($imagePath) {
+            // Delete old image if exists
+            $oldImage = $sequence->getImage();
+            if ($oldImage && file_exists($this->getParameter('kernel.project_dir') . $oldImage)) {
+                unlink($this->getParameter('kernel.project_dir') . $oldImage);
             }
 
-            // Save sequence
-            $this->em->flush();
+            // Upload new image
+            $newFileName = uniqid() . '.' . $imagePath->guessExtension();
 
-            $this->addFlash('success', 'Sequence updated successfully.');
-            return $this->redirectToRoute('user_home');
+            try {
+                $imagePath->move(
+                    $this->getParameter('kernel.project_dir') . '/public/uploads',
+                    $newFileName
+                );
+            } catch (FileException $e) {
+                return new Response($e->getMessage());
+            }
 
+            $sequence->setImage('/uploads/' . $newFileName);
         }
-               
-        return $this->render('sequence/editsequence.html.twig', [
-            'sequence' => $sequence,
-            'form' => $form->createView(),
-        ]);
+
+        // Save sequence
+        $this->em->flush();
+
+        // Retrieve the password from the form
+        $password = $form->get('password')->getData();
+
+        if ($password) {
+            // Update or create the SequencePassword document
+            if (!$sequencePassword) {
+                $sequencePassword = new LessonKeys();
+                $sequencePassword->sequenceId = (string)$sequence->getId();
+            }
+
+            // Update the password
+            $sequencePassword->password = $password;
+
+            // Persist the SequencePassword document to MongoDB
+            $this->dm->persist($sequencePassword);
+            $this->dm->flush();
+        }
+
+        $this->addFlash('success', 'Sequence updated successfully.');
+        return $this->redirectToRoute('user_home');
     }
+
+    return $this->render('sequence/editsequence.html.twig', [
+        'sequence' => $sequence,
+        'form' => $form->createView(),
+        'currentPassword' => $currentPassword, // Pass the current password to the template
+    ]);
+}
 
 
 

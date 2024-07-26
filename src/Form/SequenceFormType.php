@@ -43,6 +43,14 @@ class SequenceFormType extends AbstractType
                     'class' => 'form-control my-3',
                 ],
                 'label' => 'Image :'
+            ])
+            ->add('password', TextType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Attribuer un mot de passe d\'accès : ',
+                'required' => false,
+                'mapped' => false
             ]);
     }
 

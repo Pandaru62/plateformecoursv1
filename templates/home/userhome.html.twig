@@ -3,54 +3,95 @@
 {% block title %}PlateformeCours!{% endblock %}
 
 {% block body %}
-
 <div>
-
     <div class="d-flex align-items-center justify-content-between mt-3">
         {% if is_granted('ROLE_ADMIN') %}
-        <h2 class="d-inline">Mes séquences</h2>
-        <a href="/add-sequence" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séquence</a>
+            <h2 class="d-inline">Mes séquences</h2>
+            <a href="/add-sequence" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séquence</a>
         {% else %}
-        <h2 class="d-inline">Séquences</h2>
+            <h2 class="d-inline">Séquences</h2>
         {% endif %}
     </div>
     <div class="my-3 opacity-75">
         <div class="row">
             {% for sequence in sequences %}
-            <div class="col-12 col-md-6 col-xl-4 g-3 seq-card ">
-                <a href="/seq/{{sequence.id}}">
-                    <div class=" text-center border border-dark p-3 rounded-4">
-                        <div class="bg-dark text-light fw-bold py-3 rounded-3">
-                            <h3>Séquence {{ sequence.numero }}</h3>
-                        </div>
-                        <hr>
-                        <h4>{{ sequence.titre }}</h4>
-                        <hr>
-                        <div class="seq-img-zone">
-                            <img class="img-fluid" src="{{ asset('' ~ sequence.image) }}" alt="{{ sequence.image }}">
-                            <div class="seq-icon position-absolute">
-                                <i class="bi bi-eye-fill fs-1"></i>
-                                <p>"{{ sequence.description }}"</p>
+                <div class="col-12 col-md-6 col-xl-4 g-3 seq-card">
+                    <a href="/seq/{{sequence.id}}">
+                        <div class="text-center border border-dark p-3 rounded-4">
+                            <div class="bg-dark text-light fw-bold py-3 rounded-3">
+                                <h3>Séquence {{ sequence.numero }}</h3>
+                            </div>
+                            <hr>
+                            <h4>{{ sequence.titre }}</h4>
+                            <hr>
+                            <div class="seq-img-zone">
+                                <img class="img-fluid" src="{{ asset('' ~ sequence.image) }}" alt="{{ sequence.image }}">
+                                <div class="seq-icon position-absolute">
+                                    <i class="bi bi-eye-fill fs-1"></i>
+                                    <p>"{{ sequence.description }}"</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="btn-group" role="group" aria-label="Sequence buttons">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="/archivesequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-archive"></i></a>
+                                    <a href="/editsequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-pencil-square"></i></a>
+                                    <button type="button" class="btn btn-lg btn-outline-dark" data-bs-toggle="modal" data-bs-target="#seq{{sequence.id}}modal" data-sequence-id="{{sequence.id}}"><i class="bi bi-key"></i></button>
+                                    
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="seq{{sequence.id}}modal" tabindex="-1" aria-labelledby="seq{{sequence.id}}modalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-light">
+                                                    <h1 class="modal-title fs-5" id="seq{{sequence.id}}modalLabel">Mot de passe d'accès à Séquence {{sequence.id}}</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="password-form-{{sequence.id}}" method="POST" action="/update-password/{{sequence.id}}">
+                                                        <div class="mb-3">
+                                                            <label for="password-{{sequence.id}}" class="form-label">Vous pouvez changer le mot de passe ici :</label>
+                                                            <input type="text" class="form-control" id="password-{{sequence.id}}" name="password" placeholder="Mot de passe" required>
+                                                        </div>
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('update_password_' ~ sequence.id) }}">
+                                                        <input type="hidden" name="sequenceId" value="{{ sequence.id }}">
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer sans sauvegarder</button>
+                                                    <button type="button" class="btn btn-primary" onclick="document.getElementById('password-form-{{sequence.id}}').submit()">Sauvegarder</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
-                        <hr>
-
-                        <div class="btn-group" role="group" aria-label="Sequence buttons">
-                            {% if is_granted('ROLE_ADMIN') %}
-                            <a href="/archivesequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-archive"></i></a>
-                            <a href="/editsequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-pencil-square"></i></a>
-                            <a href="/password-edit/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-key"></i></a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
             {% endfor %}
         </div>
     </div>
-
 </div>
 
-
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modals = document.querySelectorAll('.modal');
+        
+        modals.forEach(modal => {
+            modal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const sequenceId = button.getAttribute('data-sequence-id');
+                
+                const passwordInput = modal.querySelector(`#password-${sequenceId}`);
+                const lessonKey = {{ lessonKeys|json_encode|raw }}.find(item => item.sequenceId === sequenceId);
+                
+                if (lessonKey) {
+                    passwordInput.value = lessonKey.password;
+                } else {
+                    passwordInput.value = 'Mot de passe non trouvé';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
