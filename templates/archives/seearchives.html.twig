@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cours archivés!{% endblock %}
+
+{% block body %}
+
+
+
+<div>
+
+    <div class="d-flex align-items-center justify-content-between mt-3">
+        <h2 class="d-inline">Mes séquences archivées</h2>
+    </div>
+    <div class="my-3 opacity-75">
+        <div class="row">
+            {% for sequence in sequences %}
+            <div class="col-12 col-md-6 col-xl-4 g-3 seq-card ">
+                <a href="/seq/{{sequence.id}}">
+                    <div class=" text-center border border-dark p-3 rounded-4">
+                        <div class="bg-dark text-light fw-bold py-3 rounded-3">
+                            <h3>Séquence {{ sequence.numero }}</h3>
+                        </div>
+                        <hr>
+                        <h4>{{ sequence.titre }}</h4>
+                        <hr>
+                        <div class="seq-img-zone">
+                            <img class="img-fluid" src="{{ asset('images/' ~ sequence.image) }}" alt="{{ sequence.image }}">
+                            <div class="seq-icon position-absolute">
+                                <i class="bi bi-eye-fill fs-1"></i>
+                                <p>"{{ sequence.description }}"</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="btn-group" role="group" aria-label="Sequence buttons">
+                            <a href="/unarchive/sequence/{{sequence.id}}" class="btn btn-lg btn-success"><i class="bi bi-check-circle-fill"></i></a>
+                            <a href="/delete/sequence/{{sequence.id}}" class="btn btn-lg btn-danger"><i class="bi bi-trash3-fill"></i></a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

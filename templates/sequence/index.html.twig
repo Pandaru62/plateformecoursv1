@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PlateformeCours - Voir Séquence{% endblock %}
+
+{% block body %}
+
+
+<section>
+    <ul class="nav nav-tabs mt-3">
+        <li class="nav-item">
+            <a class="nav-link disabled" aria-disabled="true">Voir d'autres séquences :</a>
+        </li>
+        {% for seq in allSequences %}
+        <li class="nav-item">
+          <a class="nav-link {{ seq.numero == sequence.numero ? 'active' : '' }} " href="/seq/{{seq.numero}}">Séquence {{ seq.numero }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section class="d-flex align-items-center justify-content-between mt-3">
+    <h2 class="d-inline">Séquence {{sequence.numero}} : {{ sequence.titre }}</h2>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="/newseance/{{sequence.id}}" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séance</a>
+    {% endif %}
+</section>
+
+<section class="mt-3">
+    <ul>
+
+    </ul>
+</section>
+
+<section class="my-3" id="show-sequence" style="background-image: url('{{ asset(sequence.image) }}');">
+
+    <div class="seance-list">
+        <div class="seance-numbered">
+            {% for seance in seances %}
+            <a href="/seance/{{seance.id}}" class="seance-dot"
+            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{seance.titre}}">
+                <span class="seance-num">{{seance.numero}}</span>
+            </a>
+            {% endfor %}
+
+        </div>
+
+        <div class="seance-default">
+            <a href="#" class="seance-button projet-button">Projet</a>
+            <a href="#" class="seance-button gram-button">Grammaire</a>
+        </div>
+    </div>
+
+</section>
+
+<script>
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
+
+{% endblock %}

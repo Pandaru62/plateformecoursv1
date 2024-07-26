@@ -4,14 +4,31 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                # by default, the feature is enabled by checking a checkbox in the
+                # login form, uncomment the following line to always enable it.
+                #always_remember_me: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -19,10 +36,32 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    access_denied_url: /home
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: /register, roles: ROLE_ADMIN }
+        - { path: /home, roles: ROLE_USER }
+        - { path: /logout, roles: ROLE_USER }
+        - { path: /seq, roles: ROLE_USER }
+        - { path: /seance, roles: ROLE_USER }
+        - { path: /add-sequence, roles: ROLE_ADMIN }
+        - { path: /add-seance, roles: ROLE_ADMIN }
+        - { path: /newdocument, roles: ROLE_ADMIN }
+        - { path: /editseance, roles: ROLE_ADMIN }
+        - { path: /editsequence, roles: ROLE_ADMIN }
+        - { path: /editdocument, roles: ROLE_ADMIN }
+        - { path: /archiveseance, roles: ROLE_ADMIN }
+        - { path: /archivesequence, roles: ROLE_ADMIN }
+        - { path: /archivedocument, roles: ROLE_ADMIN }
+        - { path: /unarchive, roles: ROLE_ADMIN }
+        - { path: /delete, roles: ROLE_ADMIN }
+
+
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
