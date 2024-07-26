@@ -20,7 +20,6 @@
         "symfony/asset-mapper": "7.1.*",
         "symfony/console": "7.1.*",
         "symfony/doctrine-messenger": "7.1.*",
-        "symfony/dotenv": "7.1.*",
         "symfony/expression-language": "7.1.*",
         "symfony/flex": "^2",
         "symfony/form": "7.1.*",
@@ -107,6 +106,7 @@
         "symfony/maker-bundle": "^1.60",
         "symfony/phpunit-bridge": "^7.1",
         "symfony/stopwatch": "7.1.*",
-        "symfony/web-profiler-bundle": "7.1.*"
+        "symfony/web-profiler-bundle": "7.1.*",
+        "symfony/dotenv": "7.1.*"
     }
 }
