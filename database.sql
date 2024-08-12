@@ -45,11 +45,17 @@ INSERT INTO sequence (numero, titre, description, image) VALUES
 (3, 'Database Management', 'Understanding database management systems and SQL queries.', 'db_management.jpg');
 
 -- Insert data into `seance` table
-INSERT INTO seance (sequence_id, numero, titre, description) VALUES
-(1, 1, 'Introduction to Variables', 'Learn about variables and data types.'),
-(1, 2, 'Control Structures', 'Understanding loops and conditional statements.'),
-(2, 1, 'Object-Oriented Programming', 'Explore the principles of OOP and its applications.'),
-(3, 1, 'Database Basics', 'Introduction to databases and SQL.');
+INSERT INTO seance (sequence_id, numero, titre, description, is_archived) VALUES
+(1, 1, 'Introduction to Variables', 'Learn about variables and data types.', 0),
+(1, 1000, 'Projet', 'Projet de fin de séquence.', 0),
+(1, 1001, 'Grammaire', 'Points grammaticaux de la séquence.', 0),
+(1, 2, 'Control Structures', 'Understanding loops and conditional statements.', 0),
+(2, 1, 'Object-Oriented Programming', 'Explore the principles of OOP and its applications.', 0),
+(2, 1000, 'Projet', 'Projet de fin de séquence.', 0),
+(2, 1001, 'Grammaire', 'Points grammaticaux de la séquence.', 0),
+(3, 1, 'Database Basics', 'Introduction to databases and SQL.', 0);
+(3, 1000, 'Projet', 'Projet de fin de séquence.', 0),
+(3, 1001, 'Grammaire', 'Points grammaticaux de la séquence.', 0);
 
 -- Insert data into `document` table
 INSERT INTO document (seance_id, type, titre, description) VALUES

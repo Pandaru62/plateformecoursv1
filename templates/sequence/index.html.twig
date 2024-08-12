@@ -4,7 +4,6 @@
 
 {% block body %}
 
-
 <section>
     <ul class="nav nav-tabs mt-3">
         <li class="nav-item">
@@ -36,17 +35,21 @@
     <div class="seance-list">
         <div class="seance-numbered">
             {% for seance in seances %}
-            <a href="/seance/{{seance.id}}" class="seance-dot"
-            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{seance.titre}}">
-                <span class="seance-num">{{seance.numero}}</span>
-            </a>
+            {% if seance.numero != 1000 and seance.numero != 1001 %}
+            <!-- by default 1000 and 1001 are kept for Project and Grammar -->
+                <a href="/seance/{{seance.id}}" class="seance-dot"
+                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{seance.titre}}">
+                    <span class="seance-num">{{seance.numero}}</span>
+                </a>
+            {% endif %}
             {% endfor %}
-
         </div>
 
+
+
         <div class="seance-default">
-            <a href="#" class="seance-button projet-button">Projet</a>
-            <a href="#" class="seance-button gram-button">Grammaire</a>
+            <a href="/seance/{{project[0].id}}" class="seance-button projet-button">Projet</a>
+            <a href="/seance/{{grammar[0].id}}" class="seance-button gram-button">Grammaire</a>
         </div>
     </div>
 

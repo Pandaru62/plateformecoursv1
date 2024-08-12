@@ -24,15 +24,33 @@
         </li>
         {% for eachseance in allSeances %}
         <li class="nav-item">
-            <a class="nav-link {{ seance.numero == eachseance.numero ? 'active' : '' }}" href="/seance/{{eachseance.id}}">Séance {{eachseance.numero}}</a>
+            <a class="nav-link {{ seance.numero == eachseance.numero ? 'active' : '' }}" href="/seance/{{eachseance.id}}">
+            {% if eachseance.numero == 1000 %}
+                Projet
+            {% elseif eachseance.numero == 1001 %}
+                Grammaire
+            {% else %}
+                Séance {{eachseance.numero}}
+            {% endif %}
+            </a>
+        
         </li>
         {% endfor %}
     </ul>
 </section>
 
 <section class="d-flex align-items-center justify-content-between mt-3">
-    <h2 class="d-inline">Séance {{seance.numero}} : {{ seance.titre }}</h2>
+    <h2 class="d-inline">
+        {% if seance.numero != 1000 and seance.numero != 1001 %}
+        Séance {{seance.numero}} : {{ seance.titre }}
+        {% else %}
+        {{seance.titre}}
+        {% endif %}
+        
+        
+    </h2>
     {% if is_granted('ROLE_ADMIN') %}
+    <a href="/editseance/{{sequence.id}}" class="btn btn-success btn-lg"><i class="bi bi-pencil"></i> Editer la séance</a>
     <a href="/newdocument" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter un document</a>
     {% endif %}
 </section>

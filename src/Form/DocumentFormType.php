@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Document;
 use App\Entity\Seance;
+use App\Repository\SeanceRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -57,8 +58,23 @@ class DocumentFormType extends AbstractType
                 'label' => 'Séance de rattachement :',
                 'class' => Seance::class,
                 'choice_label' => function (Seance $seance) {
-                    return 'Séquence ' . $seance->getSequence()->getNumero() . ' / Séance ' . $seance->getNumero() . ' - ' . $seance->getTitre();
+                    $seanceNumber = $seance->getNumero();
+
+                    if ($seanceNumber === 1000) {
+                        return 'Séq. ' . $seance->getSequence()->getNumero() . ' / Projet';
+                    } elseif ($seanceNumber === 1001) {
+                        return 'Séq. ' . $seance->getSequence()->getNumero() . ' / Grammaire';
+                    } else {
+                        return 'Séq. ' . $seance->getSequence()->getNumero() . ' / Séance ' . $seanceNumber . ' - ' . $seance->getTitre();
+                    }
+
                 },
+                'query_builder' => function (SeanceRepository $er) {
+                    return $er->createQueryBuilder('s')
+                              ->join('s.sequence', 'seq')
+                              ->orderBy('seq.numero', 'ASC')
+                              ->addOrderBy('s.numero', 'ASC');
+                }
             ])
         ;
     }

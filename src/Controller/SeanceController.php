@@ -101,7 +101,7 @@ class SeanceController extends AbstractController
             return $this->redirectToRoute('user_home');
         }
 
-        return $this->render('seance/edit.html.twig', [
+        return $this->render('seance/editseance.html.twig', [
             'seance' => $seance,
             'form' => $form->createView(),
         ]);

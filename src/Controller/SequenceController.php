@@ -85,9 +85,11 @@ class SequenceController extends AbstractController
         $allSequences = $seqRepository->findAll();
         $sequence = $seqRepository->find($seq_id);
         $seances = $seanceRepository->findBy(['sequence' => $seq_id]);
+        $project = $seanceRepository->findBy(['sequence' => $seq_id, 'numero' => 1000]);
+        $grammar = $seanceRepository->findBy(['sequence' => $seq_id, 'numero' => 1001]);
     
         return $this->render('sequence/index.html.twig', [
-            'sequence' => $sequence, 'allSequences' => $allSequences, 'seances' => $seances
+            'sequence' => $sequence, 'allSequences' => $allSequences, 'seances' => $seances, 'project' => $project, 'grammar' => $grammar
         ]);
     }
 
@@ -127,6 +129,27 @@ public function create(Request $request): Response
         $this->em->persist($newSequence);
         $this->em->flush();
 
+        // Creates default Seances: Project and Grammar
+        $seanceProject = new Seance();
+        $seanceGrammar = new Seance();
+
+        $seanceProject->setSequence($newSequence);
+        $seanceProject->setNumero(1000);
+        $seanceProject->setTitre('Projet');
+        $seanceProject->setDescription('Projet de fin de séquence');
+        $seanceProject->setArchived(0);
+
+        $seanceGrammar->setSequence($newSequence);
+        $seanceGrammar->setNumero(1001);
+        $seanceGrammar->setTitre('Grammaire');
+        $seanceGrammar->setDescription('Points grammaticaux de la séquence');
+        $seanceGrammar->setArchived(0);
+
+        // Persist the Seance entities to MySQL
+        $this->em->persist($seanceProject);
+        $this->em->persist($seanceGrammar);
+        $this->em->flush();
+
         // Retrieve the password from the form
         $password = $form->get('password')->getData();
 
@@ -141,6 +164,7 @@ public function create(Request $request): Response
             $this->dm->flush();
         }
 
+
         // Redirect to the desired route
         return $this->redirectToRoute('user_home');
     }
@@ -153,7 +177,7 @@ public function create(Request $request): Response
 
 
     
-#[Route('/editsequence/{sequenceid}', methods: ['GET', 'POST'], name: 'edit_sequence')]
+#[Route('/editsequence/{seq_id}', methods: ['GET', 'POST'], name: 'edit_sequence')]
 public function editSequence($seq_id, Request $request): Response
 {
     $repository = $this->em->getRepository(Sequence::class);
@@ -237,7 +261,7 @@ public function editSequence($seq_id, Request $request): Response
 
 
     
-    #[Route('/archivesequence/{sequenceid}', methods: ['GET'], name: 'archive_sequence')]
+    #[Route('/archivesequence/{seq_id}', methods: ['GET'], name: 'archive_sequence')]
     public function archiveSequence($seq_id): Response
     {
         $repository = $this->em->getRepository(Sequence::class);
@@ -249,7 +273,7 @@ public function editSequence($seq_id, Request $request): Response
         return $this->redirectToRoute('user_home');
     }
 
-    #[Route('/unarchive/sequence/{sequenceid}', methods: ['GET'], name: 'unarchive_sequence')]
+    #[Route('/unarchive/sequence/{seq_id}', methods: ['GET'], name: 'unarchive_sequence')]
     public function unarchiveSequence($seq_id): Response
     {
         $repository = $this->em->getRepository(Sequence::class);

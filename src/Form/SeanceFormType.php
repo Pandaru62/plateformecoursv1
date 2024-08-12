@@ -16,12 +16,13 @@ class SeanceFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('numero', IntegerType::class, [
+        $builder;
+
+        $builder->add('numero', IntegerType::class, [
                 'attr' => [
                     'class' => 'form-control my-3',
                     'min' => 0,
-                    'max' => 100,
+                    'max' => 2000,
                 ],
                 'label' => 'Numéro de la séance : '
             ])

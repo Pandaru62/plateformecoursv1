@@ -9,11 +9,26 @@
 
     {{ form_start(form) }}
 
-        {{ form_row(form.sequence) }}
+        {{ form_row(form.sequence) }}        
         {{ form_row(form.numero) }}
         {{ form_row(form.titre) }}
         {{ form_row(form.description) }}
 
         <button type="submit" class="btn btn-primary mt-3">Modifier</button>
     {{ form_end(form) }}
+
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const numeroField = document.querySelector('input[name="seance_form[numero]"]');
+
+    if (numeroField) {
+        const numeroValue = parseInt(numeroField.value, 10);
+        if (numeroValue === 1000 || numeroValue === 1001) {
+            numeroField.closest('div').style.display = 'none';
+        }
+    }
+});
+
+
+    </script>
 {% endblock %}

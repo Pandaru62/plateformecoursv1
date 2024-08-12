@@ -35,6 +35,6 @@ class PasswordController extends AbstractController
             $this->addFlash('error', 'Une erreur s\'est produite.');
         }
 
-        return $this->redirectToRoute('user_home'); // Redirect to where you need
+        return $this->redirectToRoute('user_home');
     }
 }
