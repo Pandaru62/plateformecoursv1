@@ -284,6 +284,17 @@ public function editSequence($seq_id, Request $request): Response
         $this->em->flush();
         return $this->redirectToRoute('user_home');
     }
+
+    #[Route('/delete/sequence/{seq_id}', methods: ['GET', 'DELETE'], name: 'delete_sequence')]
+    public function deleteSequence($seq_id): Response
+    {
+        $sequenceRepo = $this->em->getRepository(Sequence::class);
+        $sequence = $sequenceRepo->find($seq_id);
+        $this->em->remove($sequence);
+        $this->em->flush();
+
+        return $this->redirectToRoute('seq_archives');
+    }
     
 
 }

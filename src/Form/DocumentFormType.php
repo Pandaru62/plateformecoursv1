@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\Choice;
 
 class DocumentFormType extends AbstractType
 {
@@ -43,13 +44,34 @@ class DocumentFormType extends AbstractType
                 ],
                 'label' => 'Description associée au document : '
             ])
-            ->add('path', FileType::class, [
-                'required' => false,
-                'mapped' => false,
+            ->add('changedoc', ChoiceType::class, [
                 'attr' => [
                     'class' => 'form-control my-3',
                 ],
-                'label' => 'Fichier à télécharger : '
+                'label' => 'Souhaitez-vous modifier ce document ou ce lien ?',
+                'choices'  => [
+                    'Non' => 'changeDocNo',
+                    'Oui' => 'changeDocYes'
+                ],
+                'data' => 'changeDocNo',
+                'required' => false,
+                'mapped' => false,
+            ])
+            ->add('file_path', FileType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Fichier à télécharger :',
+                'required' => false,
+                'mapped' => false,
+            ])
+            ->add('link_path', TextType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Lien du document :',
+                'required' => false,
+                'mapped' => false,
             ])
             ->add('seance', EntityType::class, [
                 'attr' => [

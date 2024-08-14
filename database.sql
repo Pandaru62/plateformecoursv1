@@ -65,3 +65,8 @@ INSERT INTO document (seance_id, type, titre, description) VALUES
 (2, 'Quiz', 'Control Structures Quiz', 'Quiz to test knowledge on control structures.'),
 (3, 'Lecture Notes', 'Introduction to Databases', 'Notes on the basics of database management and SQL.'),
 (3, 'Exercise', 'SQL Queries Practice', 'Exercises for practicing SQL queries and database operations.');
+
+CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, lastname VARCHAR(255) NOT NULL, firstname VARCHAR(255) NOT NULL, pseudo VARCHAR(255) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (pseudo), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+INSERT INTO `user` (`lastname`, `fistname`, `pseudo`, `roles`, `password`) VALUES 
+('French', 'Teacher', 'french_teacher' , '["ROLE_USER","ROLE_ADMIN"]', '$2y$13$f8wB7blFJ.hBfvbo/YKAuuiJFn2QHakIYYw2ChZmtwK240kRF9iJy'),
+('Doe', 'John', 'john_doe', '[]', '$2y$13$vWBwDdXqlRYlEMR/cp7b4ObrU6GuWnU2nCKYjGG00iU3J0YzKerHq');

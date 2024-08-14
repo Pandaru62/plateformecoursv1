@@ -9,3 +9,4 @@ import './styles/app.css';
 
 // compile new JS file
 import './javascript/method1.js';
+import './javascript/documentscript.js';

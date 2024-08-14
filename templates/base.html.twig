@@ -24,6 +24,7 @@
         
 
         <header>
+
             <div class="container-md my-3">
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                     {% if app.user %}
@@ -39,10 +40,29 @@
                 {% endif %}
         {% if app.user %}   
                 <ul class="nav col-12 col-lg-auto mb-2 me-lg-auto justify-content-center mb-md-0">
-                    <li><a href="/home" class="nav-link px-2 link-body-emphasis">Accueil / Séquences</a></li>
+                    <li  class="nav-item"><a href="/home" class="nav-link px-2 link-body-emphasis">Accueil / Séquences</a></li>
                     {% if is_granted('ROLE_ADMIN') %}
-                    <li><a href="/archives" class="nav-link px-2 link-body-emphasis">Archives</a></li>
-                    <li><a href="#" class="nav-link px-2 link-secondary">Documents</a></li>
+
+                    <li class="nav-item dropdown">
+                        <button class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Archives
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/archives/sequences">Séquences archivées</a></li>
+                            <li><a class="dropdown-item" href="/archives/documents">Documents archivés</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                          Etudiants
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/studentslist">Voir la liste</a></li>
+                            <li><a class="dropdown-item" href="/register">Ajouter un étudiant</a></li>
+                            <li><a class="dropdown-item" href="/registerstudents">Ajouter plusieurs étudiants</a></li>
+                        </ul>
+                    </li>
+              
                     {% endif %}
                 </ul>
         
@@ -50,7 +70,9 @@
                     <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
                 </form>
         
-
+                <div class="me-2">
+                    Connecté en tant que <b>{{app.user.firstname}} {{app.user.lastname}}</b> 
+                </div>
                 <div class="dropdown text-end">
                     <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="{{asset('images/profile.png')}}" alt="user" width="32" height="32" class="rounded-circle">
@@ -71,16 +93,14 @@
                     <a href="/login" class="btn btn-outline-primary">Connexion</a>
                 </div>
                 {% endif %}
-
-
             </div>
-            <hr>
         </header>
-
+        <main>
 
 
         <div class="container-md">
             {% block body %}{% endblock %}
+        </main>
         </div>
     </body>
 </html>

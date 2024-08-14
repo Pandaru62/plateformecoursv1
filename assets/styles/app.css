@@ -201,3 +201,9 @@
     width: auto;
     opacity: 1;
 }
+
+/* erases the arrow in the documents list */
+
+main .dropdown-toggle::after {
+    display: none;
+}

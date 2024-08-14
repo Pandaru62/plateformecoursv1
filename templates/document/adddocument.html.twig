@@ -13,8 +13,10 @@
         {{ form_row(form.type) }}
         {{ form_row(form.titre) }}
         {{ form_row(form.description) }}
-        {{ form_row(form.path) }}
+        {{ form_row(form.file_path) }}
+        {{ form_row(form.link_path) }}
 
         <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
     {{ form_end(form) }}
+
 {% endblock %}

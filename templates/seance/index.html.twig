@@ -51,6 +51,9 @@
     </h2>
     {% if is_granted('ROLE_ADMIN') %}
     <a href="/editseance/{{sequence.id}}" class="btn btn-success btn-lg"><i class="bi bi-pencil"></i> Editer la séance</a>
+        {% if seance.numero != 1000 and seance.numero != 1001 %}
+        <a href="/delete/seance/{{seance.id}}" class="btn btn-danger btn-lg"><i class="bi bi-trash"></i> Supprimer la séance</a>
+        {% endif %}
     <a href="/newdocument" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter un document</a>
     {% endif %}
 </section>
@@ -65,14 +68,30 @@
             <h4>{{doc.titre}}</h4>
             <p>{{doc.description}}</p>
         </div>
-        <div class="d-flex align-self-center d-flex ms-auto p-3 fs-1">
-            <a class="btn btn-light d-flex justify-content-center align-items-center ms-2 download-button" 
+        <div class="d-flex align-self-center justify-content-center align-items-center ms-auto p-3 fs-1">
+            <a class="btn btn-light d-flex justify-content-center align-items-center download-button" 
                href="{{ asset(doc.path) }}" 
                target="_blank">
-                <i class="bi bi-download"></i> 
-                <span class="download-text">Télécharger</span>
+               {% if doc.type == 'camera-video' %}
+                    <i class="bi bi-play-circle"></i>
+                    <span class="download-text">Visionner</span>
+                {% elseif doc.type == 'link-45deg' %}
+                    <i class="bi bi-arrow-right-circle"></i>
+                    <span class="download-text">Visiter</span>
+               {% else %}
+                    <i class="bi bi-download"></i> 
+                    <span class="download-text">Télécharger</span>
+                {% endif %}
+               
             </a>
-            <a href="/editdocument/{{doc.id}}" class="text-dark"><i class="bi bi-three-dots-vertical"></i></a>
+            <div class="dropdown show-docs">
+                <i class="bi bi-three-dots-vertical dropdown-toggle" style="cursor: pointer;"></i>
+                <ul class="dropdown-menu" id="dropdownMenu">
+                    <li><a class="dropdown-item" href="/editdocument/{{doc.id}}">Editer</a></li>
+                    <li><a class="dropdown-item" href="/archivedocument/{{doc.id}}">Archiver</a></li>
+                </ul>
+            </div>
+            
         </div>
     </div>
     {% endfor %}
@@ -81,5 +100,7 @@
 <section class="my-3" id="show-seance">
 
 </section>
+
+
 
 {% endblock %}

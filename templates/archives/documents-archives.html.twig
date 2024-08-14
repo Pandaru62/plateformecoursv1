@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Docs archivés{% endblock %}
+
+{% block body %}
+
+
+
+<div>
+
+    <div class="d-flex align-items-center justify-content-between mt-3">
+        <h2 class="d-inline">Mes documents archivés</h2>
+    </div>
+    <div class="my-3 opacity-75">
+        {% if documents|length < 1 %}
+            <p class="text-center fs-2 text-secondary">Vous n'avez pas de document archivé.</p>
+        {% endif %}
+        
+        <div class="row">
+            {% for doc in documents %}
+                <div class="bg-secondary bg-opacity-50 rounded-3 d-flex seance-doc mb-3">
+                    <div class="fs-1 ms-4 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-{{doc.type}}"></i>
+                    </div>
+                    <div class="ms-4 pt-2">
+                        <h4>{{doc.titre}}</h4>
+                        <p>{{doc.description}}</p>
+                    </div>
+                    <div class="d-flex align-self-center justify-content-center align-items-center ms-auto p-3 fs-1">
+                        <a class="btn btn-light d-flex justify-content-center align-items-center download-button" 
+                           href="{{ asset(doc.path) }}" 
+                           target="_blank">
+                           {% if doc.type == 'camera-video' %}
+                                <i class="bi bi-play-circle"></i>
+                                <span class="download-text">Visionner</span>
+                            {% elseif doc.type == 'link-45deg' %}
+                                <i class="bi bi-arrow-right-circle"></i>
+                                <span class="download-text">Visiter</span>
+                           {% else %}
+                                <i class="bi bi-download"></i> 
+                                <span class="download-text">Télécharger</span>
+                            {% endif %}
+                           
+                        </a>
+                        <div class="dropdown">
+                            <i class="bi bi-three-dots-vertical  dropdown-toggle" style="cursor: pointer;"></i>
+                            <ul class="dropdown-menu" id="dropdownMenu">
+                                <li><a class="dropdown-item" href="/unarchivedocument/{{doc.id}}">Réactiver</a></li>
+                                <li><a class="dropdown-item text-danger" href="/deletedocument/{{doc.id}}">Supprimer définitivement</a></li>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

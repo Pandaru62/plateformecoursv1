@@ -10,12 +10,37 @@
     {{ form_start(form) }}
 
         {{ form_row(form.seance) }}
-        {{ form_row(form.type) }}
         {{ form_row(form.titre) }}
         {{ form_row(form.description) }}
-        {{ form_row(form.path) }}
+        
+        <div class="mb-3">
+            <div class="row bg-light rounded-3 p-2 d-flex justify-content-center align-items-center">
+                <div class="col">
+                 {% if currentType == 'lien' or currentType == 'video' %}
+                    <p>Lien actuel : <span class="fs-1 ps-3"><i class="bi bi-{{imageType}}"></i> </span><a href="{{currentPath}}">{{currentPath}}</a></p>
+                {% else %}
+                    <p>Document actuel : <span class="fs-1 ps-3"><i class="bi bi-{{imageType}}"></i> <a href="{{currentPath}}" target="_blank" class="btn btn-primary">Voir le document</a></span></p>
+                {% endif %}
+                </div>
+                <div class="col">
+                {{ form_row(form.changedoc) }}
+                </div>
+            </div>
+        </div>
 
+        <div id="editFile" class="row d-none bg-success bg-opacity-25 rounded-3 p-3">
+            <p>Choisissez le type de fichier et ajoutez votre document.</p>
+            <div class="col-3">
+                {{ form_row(form.type) }}
+            </div>
+            <div class="col-9">
+                {{ form_row(form.file_path) }}
+                {{ form_row(form.link_path) }}
+            </div>
+        </div>
+        
         <button type="submit" class="btn btn-primary mt-3">Modifier</button>
     {{ form_end(form) }}
+
     
 {% endblock %}

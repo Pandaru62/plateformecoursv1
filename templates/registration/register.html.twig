@@ -8,10 +8,77 @@
     {{ form_errors(registrationForm) }}
 
     {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword) }}
+        {{ form_row(registrationForm.lastname) }}
+        {{ form_row(registrationForm.firstname) }}
+        <label class="required" for="dateofbirth">Date de naissance : </label>
+        <input id="dateofbirth" class="form-control my-3" type="date" name="dateofbirth" required="required">
+        <hr>
+        <p>Ces informations sont générées automatiquement mais sont modifiables.</p>
+        <div class="row">
+            <div class="col-6">
+                {{ form_row(registrationForm.pseudo) }}
+            </div>
+            <div class="col-5">
+                {{ form_row(registrationForm.plainPassword) }}
+            </div>
+            <div class="col-1 d-flex justify-items-end align-items-end mb-3">
+                <button type="button" class="btn btn-outline-primary" id="toggle-password-visibility"><i class="bi bi-eye-fill"></i></button>
+            </div>
+        </div>
+        
+        
         {{ form_row(registrationForm.agreeTerms) }}
 
         <button type="submit" class="btn btn-primary mt-3">Inscription</button>
     {{ form_end(registrationForm) }}
+
+    <script>
+        const dateofbirthInput = document.getElementById('dateofbirth');
+        const passwordField = document.getElementById('registration_form_plainPassword');
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('toggle-password-visibility');
+    
+            toggleButton.addEventListener('click', function () {
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    toggleButton.innerHTML = '<i class="bi bi-eye-slash-fill"></i>';
+                } else {
+                    passwordField.type = 'password';
+                    toggleButton.innerHTML = '<i class="bi bi-eye-fill"></i>';
+                }
+            });
+        });
+
+
+        // sets a password equals to date of birth
+        dateofbirthInput.addEventListener('change', () => {
+            const dateofBirth = dateofbirthInput.value;
+            const dateParts = dateofBirth.split('-');
+
+            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`
+
+            passwordField.value = formattedDate;
+        })
+
+        const firstnameField = document.getElementById('registration_form_firstname');
+        const lastnameField = document.getElementById('registration_form_lastname');
+        const pseudoField = document.getElementById('registration_form_pseudo');
+
+        function changePseudo() {
+            const firstname = firstnameField.value;
+            const lastname = lastnameField.value;
+
+            pseudoField.value = firstname + '_' + lastname;
+        }
+
+        firstnameField.addEventListener('change', () => {
+            changePseudo();
+        })
+
+        lastnameField.addEventListener('change', () => {
+            changePseudo();
+        })
+
+    </script>
+
 {% endblock %}

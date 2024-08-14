@@ -27,7 +27,7 @@ class SeanceController extends AbstractController
 
         $seanceRepository = $this->em->getRepository(Seance::class);
         $docRepository = $this->em->getRepository(Document::class);
-        $docs = $docRepository->findBy(['seance' => $seance_id]);
+        $docs = $docRepository->findBy(['seance' => $seance_id, 'isArchived' => 0]);
         $seance = $seanceRepository->find($seance_id);
         $allSeances = $seanceRepository->findBy(['sequence' => $seance->getSequence()]);
         $sequence = $seance->getSequence();
@@ -41,7 +41,7 @@ class SeanceController extends AbstractController
                 case 'image':
                     $doc->setType('card-image');
                     break;
-                case 'link':
+                case 'lien':
                     $doc->setType('link-45deg');
                     break;
                 case 'video':
@@ -107,9 +107,6 @@ class SeanceController extends AbstractController
         ]);
     }
 
-
-
-    
     #[Route('/archiveseance/{seanceid}', methods: ['GET'], name: 'archive_seance')]
     public function archiveSeance($seanceid): Response
     {
@@ -119,6 +116,17 @@ class SeanceController extends AbstractController
         $seance->setArchived(1);
 
         $this->em->flush();
+        return $this->redirectToRoute('user_home');
+    }
+
+    #[Route('/delete/seance/{seanceid}', methods: ['GET', 'DELETE'], name: 'delete_seance')]
+    public function deleteSeance($seanceid): Response
+    {
+        $seanceRepo = $this->em->getRepository(Seance::class);
+        $seance = $seanceRepo->find($seanceid);
+        $this->em->remove($seance);
+        $this->em->flush();
+
         return $this->redirectToRoute('user_home');
     }
     
