@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editer étudiant{% endblock %}
+
+{% block body %}
+    <h1>Edition d'un étudiant</h1>
+
+
+    {{ form_start(registrationForm) }}
+
+        {{ form_errors(registrationForm) }}
+
+        {{ form_row(registrationForm.lastname) }}
+        {{ form_row(registrationForm.firstname) }}
+        {{ form_row(registrationForm.pseudo) }}
+        <div class="row">
+            <div class="col-4">
+                {{ form_row(registrationForm.changePassword) }}
+            </div>
+            <div id="passwordInputDiv" class="col-8 d-none">
+                {{ form_row(registrationForm.plainPassword) }}
+            </div>
+        </div>
+        
+        {{ form_row(registrationForm.agreeTerms) }}
+
+        <button type="submit" class="btn btn-primary mt-3">Modifier</button>
+    {{ form_end(registrationForm) }}
+
+    <script>
+        const passwordInputDiv = document.getElementById('passwordInputDiv');
+        const changePassword = document.getElementById('registration_form_changePassword');
+
+        changePassword.addEventListener('change', () => {
+            passwordInputDiv.classList.toggle('d-none', changePassword.value === 'no');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            passwordInputDiv.classList.toggle('d-none', changePassword.value === 'no');
+        });
+
+    </script>
+    
+{% endblock %}

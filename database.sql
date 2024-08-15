@@ -11,6 +11,7 @@ CREATE TABLE sequence (
     titre VARCHAR(255) NOT NULL,
     description VARCHAR(255) DEFAULT NULL,
     image VARCHAR(255) DEFAULT NULL,
+    is_archived BOOLEAN DEFAULT 0,
     PRIMARY KEY(id)
 ) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB;
 
@@ -20,8 +21,10 @@ CREATE TABLE seance (
     numero INT NOT NULL,
     titre VARCHAR(255) NOT NULL,
     description VARCHAR(255) DEFAULT NULL,
+    is_archived BOOLEAN DEFAULT 0,
     INDEX IDX_DF7DFD0E98FB19AE (sequence_id),
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    CONSTRAINT FK_DF7DFD0E98FB19AE FOREIGN KEY (sequence_id) REFERENCES sequence (id) ON DELETE CASCADE
 ) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB;
 
 CREATE TABLE document (
@@ -30,13 +33,13 @@ CREATE TABLE document (
     type VARCHAR(255) NOT NULL,
     titre VARCHAR(255) NOT NULL,
     description VARCHAR(255) DEFAULT NULL,
+    path VARCHAR(255) NOT NULL,
+    is_archived BOOLEAN DEFAULT 0,
     INDEX IDX_D8698A76E3797A94 (seance_id),
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    CONSTRAINT FK_D8698A76E3797A94 FOREIGN KEY (seance_id) REFERENCES seance (id) ON DELETE CASCADE
 ) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB;
 
--- Add foreign key constraints
-ALTER TABLE document ADD CONSTRAINT FK_D8698A76E3797A94 FOREIGN KEY (seance_id) REFERENCES seance (id);
-ALTER TABLE seance ADD CONSTRAINT FK_DF7DFD0E98FB19AE FOREIGN KEY (sequence_id) REFERENCES sequence (id);
 
 -- Insert data into `sequence` table
 INSERT INTO sequence (numero, titre, description, image) VALUES
@@ -53,20 +56,19 @@ INSERT INTO seance (sequence_id, numero, titre, description, is_archived) VALUES
 (2, 1, 'Object-Oriented Programming', 'Explore the principles of OOP and its applications.', 0),
 (2, 1000, 'Projet', 'Projet de fin de séquence.', 0),
 (2, 1001, 'Grammaire', 'Points grammaticaux de la séquence.', 0),
-(3, 1, 'Database Basics', 'Introduction to databases and SQL.', 0);
+(3, 1, 'Database Basics', 'Introduction to databases and SQL.', 0),
 (3, 1000, 'Projet', 'Projet de fin de séquence.', 0),
 (3, 1001, 'Grammaire', 'Points grammaticaux de la séquence.', 0);
 
 -- Insert data into `document` table
-INSERT INTO document (seance_id, type, titre, description) VALUES
-(1, 'Lecture Notes', 'Variables and Data Types', 'Notes on variables and different data types used in programming.'),
-(1, 'Exercise', 'Basic Variables Exercise', 'Practical exercises on using variables and data types.'),
-(2, 'Lecture Notes', 'Control Structures Overview', 'Detailed notes on loops and conditional statements.'),
-(2, 'Quiz', 'Control Structures Quiz', 'Quiz to test knowledge on control structures.'),
-(3, 'Lecture Notes', 'Introduction to Databases', 'Notes on the basics of database management and SQL.'),
-(3, 'Exercise', 'SQL Queries Practice', 'Exercises for practicing SQL queries and database operations.');
+INSERT INTO document (seance_id, type, titre, description, path) VALUES
+(1, 'Lecture Notes', 'Variables and Data Types', 'Notes on variables and different data types used in programming.', '/uploads/documents/66bcd3baf2792.jpg'),
+(1, 'Exercise', 'Basic Variables Exercise', 'Practical exercises on using variables and data types.', '/uploads/documents/66a27b4b9355d.pdf'),
+(2, 'Lecture Notes', 'Control Structures Overview', 'Detailed notes on loops and conditional statements.', '/uploads/documents/66bcd3baf2792.jpg'),
+(2, 'Quiz', 'Control Structures Quiz', 'Quiz to test knowledge on control structures.', '/uploads/documents/66a27b4b9355d.pdf'),
+(3, 'Lecture Notes', 'Introduction to Databases', 'Notes on the basics of database management and SQL.', 'https://www.youtube.com/watch?v=EvWPhHVijI8&t=1s'),
+(3, 'Exercise', 'SQL Queries Practice', 'Exercises for practicing SQL queries and database operations.', 'https://www.youtube.com/watch?v=EvWPhHVijI8&t=1s');
 
 CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, lastname VARCHAR(255) NOT NULL, firstname VARCHAR(255) NOT NULL, pseudo VARCHAR(255) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (pseudo), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
-INSERT INTO `user` (`lastname`, `fistname`, `pseudo`, `roles`, `password`) VALUES 
-('French', 'Teacher', 'french_teacher' , '["ROLE_USER","ROLE_ADMIN"]', '$2y$13$f8wB7blFJ.hBfvbo/YKAuuiJFn2QHakIYYw2ChZmtwK240kRF9iJy'),
-('Doe', 'John', 'john_doe', '[]', '$2y$13$vWBwDdXqlRYlEMR/cp7b4ObrU6GuWnU2nCKYjGG00iU3J0YzKerHq');
+INSERT INTO `user` (`id`, `roles`, `password`, `pseudo`, `lastname`, `firstname`) VALUES
+(1, '[\"ROLE_USER\", \"ROLE_ADMIN\"]', '$2y$13$6zRpLJmnjT9EJ7SZlQp48epBZrBoUwrIG/qd4/thOLm3iIm3hD8Ua', 'a_pierrepont', 'Pierrepont', 'Adrien');

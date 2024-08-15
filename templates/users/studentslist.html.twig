@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste étudiants{% endblock %}
+
+{% block body %}
+
+<section class="d-flex align-items-center justify-content-between mt-3">
+    <h2 class="d-inline">Liste des étudiants</h2>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="/register" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter un étudiant</a>
+    <a href="/registerstudents" class="btn btn-outline-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter plusieurs étudiants</a>
+    {% endif %}
+</section>
+
+<section class="mt-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Pseudo</th>
+                    <th>Editer</th>
+                    <th>Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{user.lastname}}</td>
+                    <td>{{user.firstname}}</td>
+                    <td>{{user.pseudo}}</td>
+                    <td><a href="/edit/student/{{user.id}}" class="btn btn-success"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <ul>
+        
+    </ul>
+</section>
+
+
+{% endblock %}

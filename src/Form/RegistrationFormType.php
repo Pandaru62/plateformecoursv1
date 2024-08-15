@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -51,20 +52,31 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('changePassword', ChoiceType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Souhaitez-vous changer le mot de passe de l\'étudiant ?',
+                'choices'  => [
+                    'Non' => 'no',
+                    'Oui' => 'yes'
+                ],
+                'data' => 'no',
+                'required' => false,
+                'mapped' => false,
+            ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
+                'required' => false,
                 'attr' => [
                     'autocomplete' => 'new-password',
                     'class' => 'form-control my-3'],
                 'label' => 'Mot de passe de connexion : ',
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez entrer un mot de passe.',
-                    ]),
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Votre mot de passe doit faire au moins {{ limit }} caractères',
-                        'max' => 4096,
+                        'max' => 255,
                     ]),
                 ],
             ])

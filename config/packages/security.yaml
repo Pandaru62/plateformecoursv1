@@ -60,7 +60,8 @@ security:
         - { path: /archivedocument, roles: ROLE_ADMIN }
         - { path: /unarchive, roles: ROLE_ADMIN }
         - { path: /delete, roles: ROLE_ADMIN }
-
+        - { path: /archives, roles: ROLE_ADMIN }
+        - { path : /studentslist, roles: ROLE_ADMIN }
 
         # - { path: ^/profile, roles: ROLE_USER }
 

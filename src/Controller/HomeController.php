@@ -49,6 +49,10 @@ class HomeController extends AbstractController
         $repository = $this->em->getRepository(Sequence::class);
         $sequences = $repository->findBy(['isArchived' => 0]);
 
+        usort($sequences, function (Sequence $a, Sequence $b) {
+            return strcmp($a->getNumero(), $b->getNumero());
+        });
+
                 // test MongoDB
 
                 $lessonKeysRepo = $this->dm->getRepository(LessonKeys::class);
@@ -61,5 +65,7 @@ class HomeController extends AbstractController
             'sequences' => $sequences, 'lessonKeys' => $lessonKeys, 'accessRecord' => $accessRecord
         ]);
     }
+
+    
 
 }
