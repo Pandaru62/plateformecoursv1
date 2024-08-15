@@ -31,9 +31,9 @@
                             </div>
                             <hr>
                             <div class="btn-group" role="group" aria-label="Sequence buttons">
-                                    <a href="/archivesequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-archive"></i></a>
-                                    <a href="/editsequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark"><i class="bi bi-pencil-square"></i></a>
-                                    <button type="button" class="btn btn-lg btn-outline-dark" data-bs-toggle="modal" data-bs-target="#seq{{sequence.id}}modal" data-sequence-id="{{sequence.id}}"><i class="bi bi-key"></i></button>
+                                    <a href="/archivesequence/{{sequence.id}}" class="btn btn-lg  btn-outline-dark d-flex download-button"><i class="bi bi-archive"></i><span class="download-text">Archiver</span></a>
+                                    <a href="/editsequence/{{sequence.id}}" class="btn btn-lg btn-outline-dark d-flex download-button"><i class="bi bi-pencil-square"></i><span class="download-text">Editer</span></a>
+                                    <button type="button" class="btn btn-lg btn-outline-dark d-flex download-button" data-bs-toggle="modal" data-bs-target="#seq{{sequence.id}}modal" data-sequence-id="{{sequence.id}}"><i class="bi bi-key"></i><span class="download-text">Mot de passe</span></button>
                                     
                                     <!-- Modal -->
                                     <div class="modal fade" id="seq{{sequence.id}}modal" tabindex="-1" aria-labelledby="seq{{sequence.id}}modalLabel" aria-hidden="true">
