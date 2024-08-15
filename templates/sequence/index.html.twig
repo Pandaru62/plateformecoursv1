@@ -11,7 +11,7 @@
         </li>
         {% for seq in allSequences %}
         <li class="nav-item">
-          <a class="nav-link {{ seq.numero == sequence.numero ? 'active' : '' }} " href="/seq/{{seq.id}}">Séquence {{ seq.numero }}</a>
+          <a class="nav-link {{ seq.id == sequence.id ? 'active' : '' }} " href="/seq/{{seq.id}}">Séquence {{ seq.numero }}</a>
         </li>
         {% endfor %}
     </ul>

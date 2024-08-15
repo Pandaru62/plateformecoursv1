@@ -82,7 +82,7 @@ class SequenceController extends AbstractController
     
         $seqRepository = $this->em->getRepository(Sequence::class);
         $seanceRepository = $this->em->getRepository(Seance::class);
-        $allSequences = $seqRepository->findBy([], ['numero' => 'ASC']);
+        $allSequences = $seqRepository->findBy(['isArchived' => 0], ['numero' => 'ASC']);
         $sequence = $seqRepository->find($seq_id);
         $seances = $seanceRepository->findBy(['sequence' => $seq_id]);
         $project = $seanceRepository->findBy(['sequence' => $seq_id, 'numero' => 1000]);

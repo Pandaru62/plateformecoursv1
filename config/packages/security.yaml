@@ -45,6 +45,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: /register, roles: ROLE_ADMIN }
+        - { path: /registerstudents, roles: ROLE_ADMIN }
         - { path: /home, roles: ROLE_USER }
         - { path: /logout, roles: ROLE_USER }
         - { path: /seq, roles: ROLE_USER }
@@ -60,7 +61,9 @@ security:
         - { path: /archivedocument, roles: ROLE_ADMIN }
         - { path: /unarchive, roles: ROLE_ADMIN }
         - { path: /delete, roles: ROLE_ADMIN }
+        - { path: /deletedocument, roles: ROLE_ADMIN }
         - { path: /archives, roles: ROLE_ADMIN }
+        - { path: /unarchive, roles: ROLE_ADMIN }
         - { path : /studentslist, roles: ROLE_ADMIN }
 
         # - { path: ^/profile, roles: ROLE_USER }
