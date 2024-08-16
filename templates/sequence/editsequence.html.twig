@@ -8,12 +8,45 @@
     {{ form_errors(form) }}
 
     {{ form_start(form) }}
-        {{ form_row(form.numero) }}
-        {{ form_row(form.titre) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.image) }}
-        {{ form_row(form.password, { 'attr': {'value': currentPassword} }) }}
+        <div class="row">
+            <div class="col-2">
+                {{ form_row(form.numero) }}
+            </div>
+            <div class="col-10">
+                {{ form_row(form.titre) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-9">
+                {{ form_row(form.description) }}
+                {{ form_row(form.password, { 'attr': {'value': currentPassword} }) }}   
+            </div>
+            <div class="col-3">
+                <img class="img-fluid" src="{{ asset(currentImage) }}" alt="séquence">
+            </div>
+        </div>
+        
+        
+
+        <div class="mb-3">
+            <div class="row bg-light rounded-3 p-2 d-flex justify-content-center align-items-center">
+                <div class="col-3">
+                    {{ form_row(form.changeImage)}}                    
+                </div>
+                <div class="col-9">
+                    <div id="editFile" class="row d-none bg-success bg-opacity-25 rounded-3 p-3">
+                        {{ form_row(form.image) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
 
         <button type="submit" class="btn btn-primary mt-3">Modifier</button>
     {{ form_end(form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('build/sequence.js') }}"></script>
 {% endblock %}

@@ -22,7 +22,9 @@
     {% if is_granted('ROLE_ADMIN') %}
     <a href="/newseance/{{sequence.id}}" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle"></i> Ajouter une séance</a>
     {% endif %}
+    
 </section>
+<p>{{sequence.description}}</p>
 
 <section class="mt-3">
     <ul>

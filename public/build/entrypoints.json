@@ -15,6 +15,12 @@
         "/build/runtime.js",
         "/build/document.js"
       ]
+    },
+    "sequence": {
+      "js": [
+        "/build/runtime.js",
+        "/build/sequence.js"
+      ]
     }
   }
 }

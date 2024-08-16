@@ -167,7 +167,7 @@ class DocumentController extends AbstractController
 
                 // Add success feedback and redirect
                 $this->addFlash('success', 'Document updated successfully.');
-                return $this->redirectToRoute('user_home');
+                return $this->redirectToRoute('app_seance', ['seance_id' => $document->getSeance()->getId()]);
             
         }
 

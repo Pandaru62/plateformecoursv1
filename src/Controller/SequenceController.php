@@ -194,6 +194,8 @@ public function editSequence($seq_id, Request $request): Response
     $form = $this->createForm(SequenceFormType::class, $sequence);
     $form->handleRequest($request);
 
+    $currentImage = $sequence->getImage();
+
     if ($form->isSubmitted() && $form->isValid()) {
         // Update sequence entity
         $sequence->setNumero($form->get('numero')->getData());
@@ -202,6 +204,7 @@ public function editSequence($seq_id, Request $request): Response
         $sequence->setArchived(0);
 
         // Handle image upload
+        
         $imagePath = $form->get('image')->getData();
 
         if ($imagePath) {
@@ -255,6 +258,7 @@ public function editSequence($seq_id, Request $request): Response
         'sequence' => $sequence,
         'form' => $form->createView(),
         'currentPassword' => $currentPassword, // Pass the current password to the template
+        'currentImage' => $currentImage
     ]);
 }
 

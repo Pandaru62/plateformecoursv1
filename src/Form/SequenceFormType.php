@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Sequence;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -36,13 +37,26 @@ class SequenceFormType extends AbstractType
                 ],
                 'label' => 'Description de la séquence : '
             ])
+            ->add('changeImage', ChoiceType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Souhaitez-vous modifier cette image  ?',
+                'choices'  => [
+                    'Non' => 'no',
+                    'Oui' => 'yes'
+                ],
+                'data' => 'no',
+                'required' => false,
+                'mapped' => false,
+            ])
             ->add('image', FileType::class, [
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
                     'class' => 'form-control my-3',
                 ],
-                'label' => 'Image :'
+                'label' => 'Ajoutez une image :'
             ])
             ->add('password', TextType::class, [
                 'attr' => [

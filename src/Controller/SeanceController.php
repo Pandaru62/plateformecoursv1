@@ -30,6 +30,11 @@ class SeanceController extends AbstractController
         $docs = $docRepository->findBy(['seance' => $seance_id, 'isArchived' => 0]);
         $seance = $seanceRepository->find($seance_id);
         $allSeances = $seanceRepository->findBy(['sequence' => $seance->getSequence()]);
+
+        usort($allSeances, function ($a, $b) {
+            return $a->getNumero() <=> $b->getNumero();
+        });
+
         $sequence = $seance->getSequence();
 
         // check doc type and assign icon
@@ -57,10 +62,21 @@ class SeanceController extends AbstractController
         ]);
     }
 
-    #[Route('/add-seance', name: 'create_seance', methods: ['POST', 'GET'])]
-    public function create(Request $request): Response
+    #[Route('/newseance/{seqid}', name: 'create_seance', methods: ['POST', 'GET'])]
+    public function create(Request $request, $seqid): Response
     {
+
+        // retrieve sequence id
+        $sequence = $this->em->getRepository(Sequence::class)->find($seqid);
+
+        if (!$sequence) {
+            throw $this->createNotFoundException('Sequence non trouvée');
+        }
+
         $seance = new Seance();
+
+        $seance->setSequence($sequence);
+
         $form = $this->createForm(SeanceFormType::class, $seance);
 
         $form->handleRequest($request);
@@ -72,7 +88,7 @@ class SeanceController extends AbstractController
             $this->em->persist($newSeance);
             $this->em->flush();
 
-            return $this->redirectToRoute('user_home');
+            return $this->redirectToRoute('app_sequence', ['seq_id' => $seqid]);
         }
 
         return $this->render('seance/addseance.html.twig', [
@@ -98,7 +114,7 @@ class SeanceController extends AbstractController
             $seance->setArchived(0);
 
             $this->em->flush();
-            return $this->redirectToRoute('user_home');
+            return $this->redirectToRoute('app_seance', ['seance_id' => $seance->getId()]);
         }
 
         return $this->render('seance/editseance.html.twig', [
