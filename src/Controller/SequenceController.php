@@ -101,7 +101,9 @@ public function create(Request $request): Response
     $sequence = new Sequence();
     
     // Create the form and handle the request
-    $form = $this->createForm(SequenceFormType::class, $sequence);
+    $form = $this->createForm(SequenceFormType::class, $sequence, [
+        'include_changeImage' => false, // Or true, depending on your context
+    ]);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {

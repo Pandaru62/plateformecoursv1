@@ -1,4 +1,7 @@
 /* sequence display */
+.card-title-div {
+    height: 80px;
+}
 
 .seq-card a {
     text-decoration: none;
@@ -225,4 +228,20 @@
 
 main .dropdown-toggle::after {
     display: none;
+}
+
+
+.text-justify {
+    text-align: justify;
+}
+
+/* order arrows for admins */
+
+.docOrderArrow {
+    color: white;
+}
+
+.docOrderArrow:hover {
+    color: blue;
+
 }

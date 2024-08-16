@@ -32,6 +32,9 @@ class Document
     #[ORM\Column]
     private ?bool $isArchived = null;
 
+    #[ORM\Column]
+    private ?int $doc_order = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +108,18 @@ class Document
     public function setArchived(bool $isArchived): static
     {
         $this->isArchived = $isArchived;
+
+        return $this;
+    }
+
+    public function getDocOrder(): ?int
+    {
+        return $this->doc_order;
+    }
+
+    public function setDocOrder(int $doc_order): static
+    {
+        $this->doc_order = $doc_order;
 
         return $this;
     }

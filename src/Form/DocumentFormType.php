@@ -12,12 +12,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Validator\Constraints\Choice;
 
 class DocumentFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if ($options['include_changedoc']) {
+            $builder->add('changedoc', ChoiceType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Souhaitez-vous modifier ce document ou ce lien ?',
+                'choices'  => [
+                    'Non' => 'changeDocNo',
+                    'Oui' => 'changeDocYes'
+                ],
+                'data' => 'changeDocNo',
+                'required' => false,
+                'mapped' => false
+            ]);
+        }
         $builder
             ->add('type', ChoiceType::class, [
                 'attr' => [
@@ -43,19 +57,6 @@ class DocumentFormType extends AbstractType
                     'class' => 'form-control my-3',
                 ],
                 'label' => 'Description associée au document : '
-            ])
-            ->add('changedoc', ChoiceType::class, [
-                'attr' => [
-                    'class' => 'form-control my-3',
-                ],
-                'label' => 'Souhaitez-vous modifier ce document ou ce lien ?',
-                'choices'  => [
-                    'Non' => 'changeDocNo',
-                    'Oui' => 'changeDocYes'
-                ],
-                'data' => 'changeDocNo',
-                'required' => false,
-                'mapped' => false,
             ])
             ->add('file_path', FileType::class, [
                 'attr' => [
@@ -97,14 +98,14 @@ class DocumentFormType extends AbstractType
                               ->orderBy('seq.numero', 'ASC')
                               ->addOrderBy('s.numero', 'ASC');
                 }
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Document::class,
+            'include_changedoc' => false,
         ]);
     }
 }

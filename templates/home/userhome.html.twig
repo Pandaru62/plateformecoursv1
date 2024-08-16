@@ -20,13 +20,15 @@
                                 <h3>Séquence {{ sequence.numero }}</h3>
                             </div>
                             <hr>
-                            <h4>{{ sequence.titre }}</h4>
+                            <div class="d-flex align-items-center justify-content-center card-title-div">
+                                <h4  class="text-center">{{ sequence.titre }}</h4>
+                            </div>
                             <hr>
                             <div class="seq-img-zone">
                                 <img class="img-fluid" src="{{ asset(sequence.image) }}" alt="{{ sequence.image }}">
                                 <div class="seq-icon position-absolute">
                                     <i class="bi bi-eye-fill fs-1"></i>
-                                    <p>"{{ sequence.description }}"</p>
+                                    <p>"{{ sequence.description|u.truncate(150, '...') }}"</p>
                                 </div>
                             </div>
                             <hr>

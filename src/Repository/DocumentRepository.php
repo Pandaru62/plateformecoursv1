@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Document;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,11 +12,25 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class DocumentRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $em;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $em)
     {
         parent::__construct($registry, Document::class);
+        $this->em = $em;
     }
 
+    public function getLastDocumentOrder() {
+        $query = $this->em->createQuery(
+            'SELECT d
+             FROM App\Entity\Document d
+             ORDER BY d.doc_order DESC'
+        )->setMaxResults(1);
+
+        return $query->getOneOrNullResult();
+
+    }
+    
 //    /**
 //     * @return Document[] Returns an array of Document objects
 //     */

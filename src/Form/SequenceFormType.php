@@ -16,6 +16,22 @@ class SequenceFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        if ($options['include_changeImage']) {
+            $builder->add('changeImage', ChoiceType::class, [
+                'attr' => [
+                    'class' => 'form-control my-3',
+                ],
+                'label' => 'Souhaitez-vous modifier cette image  ?',
+                'choices'  => [
+                    'Non' => 'no',
+                    'Oui' => 'yes'
+                ],
+                'data' => 'no',
+                'required' => false,
+                'mapped' => false,
+            ]);
+        }
+
         $builder
             ->add('numero', IntegerType::class, [
                 'attr' => [
@@ -36,19 +52,6 @@ class SequenceFormType extends AbstractType
                     'class' => 'form-control my-3',
                 ],
                 'label' => 'Description de la séquence : '
-            ])
-            ->add('changeImage', ChoiceType::class, [
-                'attr' => [
-                    'class' => 'form-control my-3',
-                ],
-                'label' => 'Souhaitez-vous modifier cette image  ?',
-                'choices'  => [
-                    'Non' => 'no',
-                    'Oui' => 'yes'
-                ],
-                'data' => 'no',
-                'required' => false,
-                'mapped' => false,
             ])
             ->add('image', FileType::class, [
                 'required' => false,
@@ -72,6 +75,7 @@ class SequenceFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Sequence::class,
+            'include_changeImage' => true,
         ]);
     }
 }

@@ -28,6 +28,11 @@ class SeanceController extends AbstractController
         $seanceRepository = $this->em->getRepository(Seance::class);
         $docRepository = $this->em->getRepository(Document::class);
         $docs = $docRepository->findBy(['seance' => $seance_id, 'isArchived' => 0]);
+        usort($docs, function ($a, $b) {
+            return $a->getDocOrder() <=> $b->getDocOrder();
+        });
+
+        $lastDocumentOrder = $this->em->getRepository(Document::class)->getLastDocumentOrder()->getDocOrder();
         $seance = $seanceRepository->find($seance_id);
         $allSeances = $seanceRepository->findBy(['sequence' => $seance->getSequence()]);
 
@@ -58,7 +63,7 @@ class SeanceController extends AbstractController
         }
 
         return $this->render('seance/index.html.twig', [
-            'seance' => $seance, 'docs' => $docs, 'sequence' => $sequence, 'allSeances' => $allSeances
+            'seance' => $seance, 'docs' => $docs, 'sequence' => $sequence, 'allSeances' => $allSeances, 'lastDocumentOrder' => $lastDocumentOrder
         ]);
     }
 

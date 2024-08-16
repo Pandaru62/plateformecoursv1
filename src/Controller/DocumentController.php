@@ -24,7 +24,9 @@ class DocumentController extends AbstractController
     public function create(Request $request): Response
     {
         $document = new Document();
-        $form = $this->createForm(DocumentFormType::class, $document);
+        $form = $this->createForm(DocumentFormType::class, $document, [
+            'include_changedoc' => false,
+        ]);
 
         $form->handleRequest($request);
 
@@ -61,6 +63,9 @@ class DocumentController extends AbstractController
                 }
             }
 
+            $lastDocumentOrder = $this->em->getRepository(Document::class)->getLastDocumentOrder()->getDocOrder();
+            $newDocument->setDocOrder($lastDocumentOrder +1);
+
             $this->em->persist($newDocument);
             $this->em->flush();
 
@@ -78,7 +83,9 @@ class DocumentController extends AbstractController
     {
         $repository = $this->em->getRepository(Document::class);
         $document = $repository->find($documentid);
-        $form = $this->createForm(DocumentFormType::class, $document);
+        $form = $this->createForm(DocumentFormType::class, $document, [
+            'include_changedoc' => true, // Include the 'changedoc' field
+        ]);
 
         $form->handleRequest($request);
 
@@ -161,6 +168,7 @@ class DocumentController extends AbstractController
                 $document->setDescription($form->get('description')->getData());
                 $document->setSeance($form->get('seance')->getData());
                 $document->setArchived(0);
+                $document->setDocOrder($document->getDocOrder());
 
                 // Save the changes
                 $this->em->flush();
@@ -224,6 +232,37 @@ class DocumentController extends AbstractController
 
         $this->em->flush();
         return $this->redirectToRoute('doc_archives');
+    }
+
+
+    #[Route('/documentup/{documentid}', methods: ['GET', 'POST'], name: 'document_up')]
+    public function documentUp($documentid): Response
+    {
+        $repository = $this->em->getRepository(Document::class);
+        $document = $repository->find($documentid);
+        $documentCurrentOrder = $document->getDocOrder();
+        $swipedDocument = $repository->findOneBy(['seance' => $document->getSeance()->getId(), 'doc_order' => $documentCurrentOrder -1]);
+ 
+        $document->setDocOrder($documentCurrentOrder - 1);
+        $swipedDocument->setDocOrder($documentCurrentOrder);
+
+        $this->em->flush();
+        return $this->redirectToRoute('app_seance', ['seance_id' => $document->getSeance()->getId()]);
+    }
+
+    #[Route('/documentdown/{documentid}', methods: ['GET', 'POST'], name: 'document_down')]
+    public function documentDown($documentid): Response
+    {
+        $repository = $this->em->getRepository(Document::class);
+        $document = $repository->find($documentid);
+        $documentCurrentOrder = $document->getDocOrder();
+        $swipedDocument = $repository->findOneBy(['seance' => $document->getSeance()->getId(), 'doc_order' => $documentCurrentOrder +1]);
+ 
+        $document->setDocOrder($documentCurrentOrder + 1);
+        $swipedDocument->setDocOrder($documentCurrentOrder);
+
+        $this->em->flush();
+        return $this->redirectToRoute('app_seance', ['seance_id' => $document->getSeance()->getId()]);
     }
 
 

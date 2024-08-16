@@ -35,6 +35,7 @@ CREATE TABLE document (
     description VARCHAR(255) DEFAULT NULL,
     path VARCHAR(255) NOT NULL,
     is_archived BOOLEAN DEFAULT 0,
+    doc_order INT NOT NULL,
     INDEX IDX_D8698A76E3797A94 (seance_id),
     PRIMARY KEY(id),
     CONSTRAINT FK_D8698A76E3797A94 FOREIGN KEY (seance_id) REFERENCES seance (id) ON DELETE CASCADE
@@ -61,13 +62,13 @@ INSERT INTO seance (sequence_id, numero, titre, description, is_archived) VALUES
 (3, 1001, 'Grammaire', 'Points grammaticaux de la séquence.', 0);
 
 -- Insert data into `document` table
-INSERT INTO document (seance_id, type, titre, description, path) VALUES
-(1, 'Lecture Notes', 'Variables and Data Types', 'Notes on variables and different data types used in programming.', '/uploads/documents/66bcd3baf2792.jpg'),
-(1, 'Exercise', 'Basic Variables Exercise', 'Practical exercises on using variables and data types.', '/uploads/documents/66a27b4b9355d.pdf'),
-(2, 'Lecture Notes', 'Control Structures Overview', 'Detailed notes on loops and conditional statements.', '/uploads/documents/66bcd3baf2792.jpg'),
-(2, 'Quiz', 'Control Structures Quiz', 'Quiz to test knowledge on control structures.', '/uploads/documents/66a27b4b9355d.pdf'),
-(3, 'Lecture Notes', 'Introduction to Databases', 'Notes on the basics of database management and SQL.', 'https://www.youtube.com/watch?v=EvWPhHVijI8&t=1s'),
-(3, 'Exercise', 'SQL Queries Practice', 'Exercises for practicing SQL queries and database operations.', 'https://www.youtube.com/watch?v=EvWPhHVijI8&t=1s');
+INSERT INTO document (seance_id, type, titre, description, path, doc_order) VALUES
+(1, 'Lecture Notes', 'Variables and Data Types', 'Notes on variables and different data types used in programming.', '/uploads/documents/66bcd3baf2792.jpg', 1),
+(1, 'Exercise', 'Basic Variables Exercise', 'Practical exercises on using variables and data types.', '/uploads/documents/66a27b4b9355d.pdf', 2),
+(2, 'Lecture Notes', 'Control Structures Overview', 'Detailed notes on loops and conditional statements.', '/uploads/documents/66bcd3baf2792.jpg', 1),
+(2, 'Quiz', 'Control Structures Quiz', 'Quiz to test knowledge on control structures.', '/uploads/documents/66a27b4b9355d.pdf', 2),
+(3, 'Lecture Notes', 'Introduction to Databases', 'Notes on the basics of database management and SQL.', 'https://www.youtube.com/watch?v=EvWPhHVijI8&t=1s', 1),
+(3, 'Exercise', 'SQL Queries Practice', 'Exercises for practicing SQL queries and database operations.', 'https://www.youtube.com/watch?v=EvWPhHVijI8&t=1s', 2);
 
 CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, lastname VARCHAR(255) NOT NULL, firstname VARCHAR(255) NOT NULL, pseudo VARCHAR(255) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_USERNAME (pseudo), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
 INSERT INTO `user` (`id`, `roles`, `password`, `pseudo`, `lastname`, `firstname`) VALUES
