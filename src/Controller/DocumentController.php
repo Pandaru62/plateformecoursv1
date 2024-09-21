@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Document;
+use App\Entity\Seance;
 use App\Form\DocumentFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,10 +21,23 @@ class DocumentController extends AbstractController
         $this -> em = $em;
     }
 
-    #[Route('/newdocument', name: 'create_doc', methods: ['GET', 'POST'])]
-    public function create(Request $request): Response
+    #[Route('/newdocument/{seanceid?}', name: 'create_doc', methods: ['GET', 'POST'])]
+    public function create(Request $request, $seanceid = null): Response
     {
+
+        if($seanceid !== null) {
+            // retrieve seance id
+                $seance = $this->em->getRepository(Seance::class)->find($seanceid);
+    
+                if (!$seance) {
+                    throw $this->createNotFoundException('Séance non trouvée');
+                }
+            } else {
+                $seance = $this->em->getRepository(Seance::class)->findOneBy(['sequence' => 1, 'numero' => 1]);
+            }
+
         $document = new Document();
+        $document->setSeance($seance);
         $form = $this->createForm(DocumentFormType::class, $document, [
             'include_changedoc' => false,
         ]);
@@ -69,7 +83,7 @@ class DocumentController extends AbstractController
             $this->em->persist($newDocument);
             $this->em->flush();
 
-            return $this->redirectToRoute('user_home');
+            return $this->redirectToRoute('app_seance', ['seance_id' => $newDocument->getSeance()->getId()]);
         }
 
         return $this->render('document/adddocument.html.twig', [
@@ -219,7 +233,7 @@ class DocumentController extends AbstractController
         $document->setArchived(1);
 
         $this->em->flush();
-        return $this->redirectToRoute('doc_archives');
+        return $this->redirectToRoute('app_seance', ['seance_id' => $document->getSeance()->getId()]);
     }
     
     #[Route('/unarchivedocument/{documentid}', methods: ['GET'], name: 'unarchive_document')]

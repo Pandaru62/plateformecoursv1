@@ -67,15 +67,19 @@ class SeanceController extends AbstractController
         ]);
     }
 
-    #[Route('/newseance/{seqid}', name: 'create_seance', methods: ['POST', 'GET'])]
-    public function create(Request $request, $seqid): Response
+    #[Route('/newseance/{seqid?}', name: 'create_seance', methods: ['POST', 'GET'])]
+    public function create(Request $request, $seqid = null): Response
     {
 
+        if($seqid !== null) {
         // retrieve sequence id
-        $sequence = $this->em->getRepository(Sequence::class)->find($seqid);
+            $sequence = $this->em->getRepository(Sequence::class)->find($seqid);
 
-        if (!$sequence) {
-            throw $this->createNotFoundException('Sequence non trouvée');
+            if (!$sequence) {
+                throw $this->createNotFoundException('Sequence non trouvée');
+            }
+        } else {
+            $sequence = $this->em->getRepository(Sequence::class)->findOneBy(['numero' => 1]);
         }
 
         $seance = new Seance();
@@ -137,7 +141,7 @@ class SeanceController extends AbstractController
         $seance->setArchived(1);
 
         $this->em->flush();
-        return $this->redirectToRoute('user_home');
+        return $this->redirectToRoute('app_sequence', ['seq_id' => $seance->getSequence()->getId()]);
     }
 
     #[Route('/delete/seance/{seanceid}', methods: ['GET', 'DELETE'], name: 'delete_seance')]
